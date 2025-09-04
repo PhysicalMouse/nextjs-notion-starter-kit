@@ -17,8 +17,8 @@ export default siteConfig({
   description: 'PhysicalMouse Blog',
 
   // social usernames (optional)
-  twitter: 'PhyMouse10086',
-  github: 'PhysicalMouse',
+  //twitter: 'PhyMouse10086',
+  //github: 'PhysicalMouse',
   //linkedin: 'fisch2',
   // mastodon: '#', // optional mastodon profile URL, provides link verification
   // newsletter: '#', // optional newsletter URL
