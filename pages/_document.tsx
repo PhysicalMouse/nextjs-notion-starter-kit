@@ -18,7 +18,8 @@ export default class MyDocument extends Document {
 
             <meta name="baidu-site-verification" content="codeva-fN1CHA3fGo" />
             <meta name="msvalidate.01" content="96B332BE8C0729927B4C665A4E31D77A" />
-
+            <meta name="google-site-verification" content="9gQof63B6fxt92-FiBLg4N0CZ1g0tRFtlCgf80-A54Q" />
+          
           </Head>
 
           <body>
