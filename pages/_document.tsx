@@ -14,8 +14,11 @@ export default class MyDocument extends Document {
               sizes='32x32'
               href='favicon.png'
             />
-
             <link rel='manifest' href='/manifest.json' />
+
+            <meta name="baidu-site-verification" content="codeva-fN1CHA3fGo" />
+            <meta name="msvalidate.01" content="96B332BE8C0729927B4C665A4E31D77A" />
+
           </Head>
 
           <body>
