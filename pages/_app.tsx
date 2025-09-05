@@ -63,13 +63,11 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [router.events])
 
-  return (
-  <>
-    <Component {...pageProps} />
-    {/* Analytics */}
-    <Analytics />
-    {/* Speed Insights */}
-    <SpeedInsights/>
-  </>
+    return (
+    <>
+      <Component {...pageProps} />
+      <Analytics />
+      <SpeedInsights />
+    </>
   )
 }
