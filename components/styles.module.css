@@ -4,6 +4,13 @@
   }
 }
 
+.centerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 .container {
   position: absolute;
   top: 0;

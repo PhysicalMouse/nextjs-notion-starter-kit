@@ -79,7 +79,9 @@ export function NotionPageHeader({
             })
             .filter(Boolean)}
 
+          <div className={styles.centerWrapper}>
           <ToggleThemeButton />
+          </div>
 
           {isSearchEnabled && <Search block={block} title={null} />}
         </div>
