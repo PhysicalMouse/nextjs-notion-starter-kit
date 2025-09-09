@@ -144,24 +144,29 @@
 /* ✅ Responsive layout for small screens */
 @media only screen and (max-width: 566px) {
   .footer {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
   }
 
-  .copyright {
-    grid-row: 1;
+  .copyright,
+  .settings,
+  .social {
+    margin-top: 1em;
     justify-self: center;
+  }
+
+  .copyright {
+    order: 1;
   }
 
   .settings {
-    grid-row: 2;
-    justify-self: center;
+    order: 2;
   }
 
   .social {
-    grid-row: 3;
-    justify-self: center;
+    order: 3;
   }
 }
 
@@ -230,7 +235,6 @@
   .githubCorner:hover .octoArm {
     animation: none;
   }
-
 
   .githubCorner .octoArm {
     animation: octocat-wave 560ms ease-in-out;
