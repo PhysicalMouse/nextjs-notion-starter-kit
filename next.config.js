@@ -12,8 +12,8 @@ export default withBundleAnalyzer({
   staticPageGenerationTimeout: 300,
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'www.physicalmouse.notion.site' },
-      { protocol: 'https', hostname: 'physicalmouse.notion.site' },
+      { protocol: 'https', hostname: 'www.notion.so' },
+      { protocol: 'https', hostname: 'notion.so' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'abs.twimg.com' },
       { protocol: 'https', hostname: 'pbs.twimg.com' },
