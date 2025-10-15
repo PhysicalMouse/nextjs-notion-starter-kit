@@ -1,7 +1,7 @@
 // components/Utterances.tsx
 import { useEffect } from 'react'
 
-const Utterances = () => {
+function Utterances() {
   useEffect(() => {
     const script = document.createElement('script')
     script.src = 'https://utteranc.es/client.js'
@@ -13,7 +13,7 @@ const Utterances = () => {
     script.async = true
 
     const commentBox = document.getElementById('comments')
-    if (commentBox) commentBox.appendChild(script)
+    if (commentBox) commentBox.append(script)
   }, [])
 
   return <div id="comments" />
