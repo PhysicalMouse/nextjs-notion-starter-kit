@@ -30,7 +30,6 @@ import { Page404 } from './Page404'
 import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
 import styles from './styles.module.css'
-import Utterances from './Utterances' // 新增导入
 
 // -----------------------------------------------------------------------------
 // dynamic imports for optional components
@@ -326,13 +325,10 @@ export function NotionPage({
         mapImageUrl={mapImageUrl}
         searchNotion={config.isSearchEnabled ? searchNotion : undefined}
         pageAside={pageAside}
-        footer={
-          <>
-            <Utterances /> {/* 在footer前添加评论组件 */}
-            {footer}
-          </>
-        }
+        footer={footer}
       />
+
+
     </>
   )
 }
