@@ -285,6 +285,10 @@ export function NotionPage({
     getPageProperty<string>('Description', block, recordMap) ||
     config.description
 
+  const publishedTime = getPageProperty<string>('Published', block, recordMap)
+  const modifiedTime = getPageProperty<string>('Last Edited', block, recordMap)
+  const author = getPageProperty<string>('Author', block, recordMap)
+
   return (
     <>
       <PageHead
@@ -295,6 +299,9 @@ export function NotionPage({
         image={socialImage}
         url={canonicalPageUrl}
         isBlogPost={isBlogPost}
+        publishedTime={publishedTime}
+        modifiedTime={modifiedTime}
+        author={author}
       />
 
       {isLiteMode && <BodyClassName className='notion-lite' />}

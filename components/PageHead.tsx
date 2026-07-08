@@ -11,20 +11,79 @@ export function PageHead({
   pageId,
   image,
   url,
-  isBlogPost
+  isBlogPost,
+  publishedTime,
+  modifiedTime,
+  author
 }: types.PageProps & {
   title?: string
   description?: string
   image?: string
   url?: string
   isBlogPost?: boolean
+  publishedTime?: string | number | null
+  modifiedTime?: string | number | null
+  author?: string
 }) {
   const rssFeedUrl = `${config.host}/feed`
 
-  title = title ?? site?.name
-  description = description ?? site?.description
-
+  const siteName = site?.name ?? config.name
+  const pageTitle = title ?? siteName
+  const pageDescription = description ?? site?.description ?? config.description
   const socialImageUrl = getSocialImageUrl(pageId) || image
+  const pageAuthor = author || config.author
+  const pageType = isBlogPost ? 'article' : 'website'
+  const pageLanguage = config.language || 'en'
+
+  const toIsoDate = (value?: string | number | null) => {
+    if (!value) return undefined
+
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return undefined
+
+    return date.toISOString()
+  }
+
+  const publishedAt = toIsoDate(publishedTime)
+  const modifiedAt = toIsoDate(modifiedTime ?? publishedTime)
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteName,
+    url: config.host,
+    description: pageDescription,
+    publisher: {
+      '@type': 'Organization',
+      name: siteName,
+      url: config.host
+    }
+  }
+
+  const blogPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': url ? `${url}#BlogPosting` : undefined,
+    mainEntityOfPage: url,
+    headline: pageTitle,
+    name: pageTitle,
+    description: pageDescription,
+    author: {
+      '@type': 'Person',
+      name: pageAuthor
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: siteName,
+      url: config.host
+    },
+    image: socialImageUrl,
+    datePublished: publishedAt,
+    dateModified: modifiedAt,
+    inLanguage: pageLanguage
+  }
+
+  const structuredData = [websiteSchema, ...(isBlogPost ? [blogPostingSchema] : [])]
 
   return (
     <Head>
@@ -52,7 +111,9 @@ export function PageHead({
       />
 
       <meta name='robots' content='index,follow' />
-      <meta property='og:type' content='website' />
+      <meta name='author' content={pageAuthor} />
+      <meta property='og:type' content={pageType} />
+      <meta property='og:locale' content={pageLanguage} />
 
       {site && (
         <>
@@ -61,15 +122,23 @@ export function PageHead({
         </>
       )}
 
+      {publishedAt && (
+        <meta property='article:published_time' content={publishedAt} />
+      )}
+      {modifiedAt && (
+        <meta property='article:modified_time' content={modifiedAt} />
+      )}
+      {pageAuthor && <meta property='article:author' content={pageAuthor} />}
+
       {config.twitter && (
         <meta name='twitter:creator' content={`@${config.twitter}`} />
       )}
 
-      {description && (
+      {pageDescription && (
         <>
-          <meta name='description' content={description} />
-          <meta property='og:description' content={description} />
-          <meta name='twitter:description' content={description} />
+          <meta name='description' content={pageDescription} />
+          <meta property='og:description' content={pageDescription} />
+          <meta name='twitter:description' content={pageDescription} />
         </>
       )}
 
@@ -98,30 +167,13 @@ export function PageHead({
         title={site?.name}
       />
 
-      <meta property='og:title' content={title} />
-      <meta name='twitter:title' content={title} />
-      <title>{title}</title>
+      <meta property='og:title' content={pageTitle} />
+      <meta name='twitter:title' content={pageTitle} />
+      <title>{pageTitle}</title>
 
-      {/* Better SEO for the blog posts */}
-      {isBlogPost && (
-        <script type='application/ld+json'>
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
-            '@id': `${url}#BlogPosting`,
-            mainEntityOfPage: url,
-            url,
-            headline: title,
-            name: title,
-            description,
-            author: {
-              '@type': 'Person',
-              name: config.author
-            },
-            image: socialImageUrl
-          })}
-        </script>
-      )}
+      <script type='application/ld+json'>
+        {JSON.stringify(structuredData)}
+      </script>
     </Head>
   )
 }
