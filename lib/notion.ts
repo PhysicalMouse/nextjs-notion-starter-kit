@@ -42,6 +42,84 @@ const getNavigationLinkPages = pMemoize(
   }
 )
 
+// The Notion data returned via our API proxy uses a double-nested shape for
+// collection views (`collection_view[id].value.value`). notion-client's
+// getPage reads the view value one level too shallow (`collection_view[id]
+// .value`), so it never sees the view's `query2` (sort + filter). As a result
+// the `queryCollection` request is sent WITHOUT the view's sort or filter, and
+// the site renders collections in Notion's default order (and includes rows
+// the view's filter should have hidden) instead of matching what you see in
+// Notion.
+//
+// This re-runs the collection query for each rendered view using the correctly
+// unwrapped view value, so Notion applies the real sort + filter, and then
+// merges the corrected results back into the record map.
+async function fixCollectionQueries(recordMap: ExtendedRecordMap) {
+  const collectionQuery = (recordMap as any).collection_query
+  const collectionView = recordMap.collection_view
+
+  if (!collectionQuery || !collectionView) {
+    return
+  }
+
+  const instances: Array<{ collectionId: string; viewId: string }> = []
+  for (const [collectionId, viewMap] of Object.entries<any>(collectionQuery)) {
+    if (!viewMap) continue
+    for (const viewId of Object.keys(viewMap)) {
+      instances.push({ collectionId, viewId })
+    }
+  }
+
+  await pMap(
+    instances,
+    async ({ collectionId, viewId }) => {
+      const viewEntry = collectionView[viewId] as any
+      const spaceId = viewEntry?.spaceId
+      // correctly unwrap the view value (handles the double-nested proxy shape)
+      const viewValue = viewEntry?.value?.value ?? viewEntry?.value
+
+      // only re-query when the view actually defines a sort and/or filter
+      if (!viewValue?.query2?.sort && !viewValue?.query2?.filter) {
+        return
+      }
+
+      try {
+        const collectionData = await notion.getCollectionData(
+          collectionId,
+          viewId,
+          viewValue,
+          { spaceId }
+        )
+
+        const reducerResults = (collectionData as any).result?.reducerResults
+        if (!reducerResults) {
+          return
+        }
+
+        // merge any newly-fetched blocks/collection info so titles, covers,
+        // etc. for the (now correctly ordered/filtered) rows are available
+        recordMap.block = {
+          ...recordMap.block,
+          ...(collectionData as any).recordMap?.block
+        }
+        recordMap.collection = {
+          ...recordMap.collection,
+          ...(collectionData as any).recordMap?.collection
+        }
+
+        collectionQuery[collectionId][viewId] = reducerResults
+      } catch (err: any) {
+        console.warn(
+          'NotionAPI fixCollectionQueries error',
+          { collectionId, viewId },
+          err?.message
+        )
+      }
+    },
+    { concurrency: 3 }
+  )
+}
+
 export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
   let recordMap = await notion.getPage(pageId)
 
@@ -59,6 +137,10 @@ export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
       )
     }
   }
+
+  // re-run collection queries so Notion's real sort + filter are applied,
+  // matching the ordering you see in Notion
+  await fixCollectionQueries(recordMap)
 
   if (isPreviewImageSupportEnabled) {
     const previewImageMap = await getPreviewImageMap(recordMap)
