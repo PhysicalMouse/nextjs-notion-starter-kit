@@ -5,10 +5,28 @@ export default class MyDocument extends Document {
     return (
       <Html lang='en'>
         <Head>
+          <meta
+            name='msvalidate.01'
+            content='96B332BE8C0729927B4C665A4E31D77A'
+          />
           <link rel='shortcut icon' href='/favicon.png' />
           <link rel='icon' type='image/png' sizes='32x32' href='favicon.png' />
 
           <link rel='manifest' href='/manifest.json' />
+          <script
+            async
+            src='https://www.googletagmanager.com/gtag/js?id=G-CXY89KXMRM'
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-CXY89KXMRM');
+`
+            }}
+          />
         </Head>
 
         <body>
