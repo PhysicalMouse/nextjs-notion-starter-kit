@@ -42,15 +42,19 @@ const getNavigationLinkPages = pMemoize(
   }
 )
 
-// Notion "collection" (database) views can be ordered manually by dragging
-// rows/cards. That manual order is stored on the view as `page_sort`, but
-// Notion's `queryCollection` API does NOT apply it when the view has no
-// explicit sort rule — it returns a different default order. As a result the
-// site renders collections in a different order than what you see in Notion.
+// The Notion data returned via our API proxy uses a double-nested shape for
+// collection views (`collection_view[id].value.value`). notion-client's
+// getPage reads the view value one level too shallow (`collection_view[id]
+// .value`), so it never sees the view's `query2` (sort + filter). As a result
+// the `queryCollection` request is sent WITHOUT the view's sort or filter, and
+// the site renders collections in Notion's default order (and includes rows
+// the view's filter should have hidden) instead of matching what you see in
+// Notion.
 //
-// This reorders each view's query results to follow the view's `page_sort`
-// so the site matches your Notion ordering.
-function applyCollectionPageSort(recordMap: ExtendedRecordMap) {
+// This re-runs the collection query for each rendered view using the correctly
+// unwrapped view value, so Notion applies the real sort + filter, and then
+// merges the corrected results back into the record map.
+async function fixCollectionQueries(recordMap: ExtendedRecordMap) {
   const collectionQuery = (recordMap as any).collection_query
   const collectionView = recordMap.collection_view
 
@@ -58,41 +62,62 @@ function applyCollectionPageSort(recordMap: ExtendedRecordMap) {
     return
   }
 
-  for (const viewMap of Object.values<any>(collectionQuery)) {
+  const instances: Array<{ collectionId: string; viewId: string }> = []
+  for (const [collectionId, viewMap] of Object.entries<any>(collectionQuery)) {
     if (!viewMap) continue
-
-    for (const [viewId, result] of Object.entries<any>(viewMap)) {
-      const viewEntry = collectionView[viewId] as any
-      // handle both the normalized (`.value`) and raw (`.value.value`) shapes
-      const viewValue = viewEntry?.value?.value ?? viewEntry?.value
-      const pageSort: string[] | undefined = viewValue?.page_sort
-
-      if (!Array.isArray(pageSort) || !pageSort.length) {
-        continue
-      }
-
-      const groupResults = result?.collection_group_results ?? result
-      const blockIds: string[] | undefined = groupResults?.blockIds
-
-      if (!Array.isArray(blockIds) || !blockIds.length) {
-        continue
-      }
-
-      const sortIndex = new Map(pageSort.map((id, index) => [id, index]))
-      const fallback = Number.MAX_SAFE_INTEGER
-
-      // stable sort: ids present in page_sort come first (in that order),
-      // any ids not in page_sort keep their original relative order at the end
-      groupResults.blockIds = blockIds
-        .map((id, index) => ({ id, index }))
-        .sort((a, b) => {
-          const ai = sortIndex.has(a.id) ? sortIndex.get(a.id)! : fallback
-          const bi = sortIndex.has(b.id) ? sortIndex.get(b.id)! : fallback
-          return ai - bi || a.index - b.index
-        })
-        .map((entry) => entry.id)
+    for (const viewId of Object.keys(viewMap)) {
+      instances.push({ collectionId, viewId })
     }
   }
+
+  await pMap(
+    instances,
+    async ({ collectionId, viewId }) => {
+      const viewEntry = collectionView[viewId] as any
+      const spaceId = viewEntry?.spaceId
+      // correctly unwrap the view value (handles the double-nested proxy shape)
+      const viewValue = viewEntry?.value?.value ?? viewEntry?.value
+
+      // only re-query when the view actually defines a sort and/or filter
+      if (!viewValue?.query2?.sort && !viewValue?.query2?.filter) {
+        return
+      }
+
+      try {
+        const collectionData = await notion.getCollectionData(
+          collectionId,
+          viewId,
+          viewValue,
+          { spaceId }
+        )
+
+        const reducerResults = (collectionData as any).result?.reducerResults
+        if (!reducerResults) {
+          return
+        }
+
+        // merge any newly-fetched blocks/collection info so titles, covers,
+        // etc. for the (now correctly ordered/filtered) rows are available
+        recordMap.block = {
+          ...recordMap.block,
+          ...(collectionData as any).recordMap?.block
+        }
+        recordMap.collection = {
+          ...recordMap.collection,
+          ...(collectionData as any).recordMap?.collection
+        }
+
+        collectionQuery[collectionId][viewId] = reducerResults
+      } catch (err: any) {
+        console.warn(
+          'NotionAPI fixCollectionQueries error',
+          { collectionId, viewId },
+          err?.message
+        )
+      }
+    },
+    { concurrency: 3 }
+  )
 }
 
 export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
@@ -113,8 +138,9 @@ export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
     }
   }
 
-  // reorder collection results to match the manual ordering set in Notion
-  applyCollectionPageSort(recordMap)
+  // re-run collection queries so Notion's real sort + filter are applied,
+  // matching the ordering you see in Notion
+  await fixCollectionQueries(recordMap)
 
   if (isPreviewImageSupportEnabled) {
     const previewImageMap = await getPreviewImageMap(recordMap)
