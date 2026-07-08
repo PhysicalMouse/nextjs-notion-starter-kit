@@ -12,7 +12,6 @@ import {
 } from 'notion-utils'
 
 import * as libConfig from '@/lib/config'
-import interSemiBoldFont from '@/lib/fonts/inter-semibold'
 import { mapImageUrl } from '@/lib/map-image-url'
 import { notion } from '@/lib/notion-api'
 import { type NotionPageInfo, type PageError } from '@/lib/types'
@@ -23,13 +22,20 @@ export default async function OGImage(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { searchParams } = new URL(req.url!)
+  const url = new URL(req.url!)
+  const { searchParams } = url
   const pageId = parsePageId(
     searchParams.get('id') || libConfig.rootNotionPageId
   )
   if (!pageId) {
     return new Response('Invalid notion page id', { status: 400 })
   }
+
+  // Fetch the font at runtime instead of bundling it into the edge function.
+  // This keeps the edge function under Vercel's 1 MB size limit.
+  const interSemiBoldFont = await fetch(
+    new URL('/fonts/inter-semibold.ttf', url.origin)
+  ).then((res) => res.arrayBuffer())
 
   const pageInfoOrError = await getNotionPageInfo({ pageId })
   if (pageInfoOrError.type === 'error') {
