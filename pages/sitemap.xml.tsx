@@ -31,28 +31,96 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 }
 
-const createSitemap = (siteMap: SiteMap) =>
-  `<?xml version="1.0" encoding="UTF-8"?>
+const escapeXml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
+
+const formatDate = (value?: string | number | null) => {
+  if (!value) return undefined
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return undefined
+  }
+
+  return date.toISOString()
+}
+
+const getLastModified = (siteMap: SiteMap, pageId: string) => {
+  const recordMap = siteMap.pageMap[pageId]
+  const blockEntry = recordMap?.block?.[pageId]
+  const block = (blockEntry as { value?: any } | undefined)?.value ?? blockEntry
+  const blockValue = block as
+    | { last_edited_time?: string | number | null; created_time?: string | number | null }
+    | undefined
+
+  return formatDate(blockValue?.last_edited_time ?? blockValue?.created_time)
+}
+
+const getPriority = (pathname: string) => {
+  if (!pathname || pathname === '/') return '1.0'
+
+  const depth = pathname.split('/').filter(Boolean).length
+  return depth <= 1 ? '0.8' : '0.6'
+}
+
+const getChangeFreq = (pathname: string) => {
+  if (!pathname || pathname === '/') return 'daily'
+
+  const depth = pathname.split('/').filter(Boolean).length
+  return depth <= 1 ? 'weekly' : 'monthly'
+}
+
+const createSitemap = (siteMap: SiteMap) => {
+  const entries = [
+    {
+      loc: `${host}/`,
+      lastmod: undefined,
+      changefreq: 'daily',
+      priority: '1.0'
+    },
+    ...Object.entries(siteMap.canonicalPageMap)
+      .filter(([canonicalPagePath]) => Boolean(canonicalPagePath))
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([canonicalPagePath, pageId]) => {
+        const loc = `${host}/${canonicalPagePath}`
+        const normalizedPath = canonicalPagePath.startsWith('/')
+          ? canonicalPagePath
+          : `/${canonicalPagePath}`
+
+        return {
+          loc,
+          lastmod: getLastModified(siteMap, pageId),
+          changefreq: getChangeFreq(normalizedPath),
+          priority: getPriority(normalizedPath)
+        }
+      })
+  ]
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-      <loc>${host}</loc>
-    </url>
+    ${entries
+      .map(({ loc, lastmod, changefreq, priority }) => {
+        const lastmodNode = lastmod
+          ? `\n      <lastmod>${escapeXml(lastmod)}</lastmod>`
+          : ''
 
-    <url>
-      <loc>${host}/</loc>
-    </url>
-
-    ${Object.keys(siteMap.canonicalPageMap)
-      .map((canonicalPagePath) =>
-        `
-          <url>
-            <loc>${host}/${canonicalPagePath}</loc>
-          </url>
+        return `
+      <url>
+        <loc>${escapeXml(loc)}</loc>${lastmodNode}
+        <changefreq>${escapeXml(changefreq)}</changefreq>
+        <priority>${escapeXml(priority)}</priority>
+      </url>
         `.trim()
-      )
-      .join('')}
+      })
+      .join('\n')}
   </urlset>
 `
+}
 
 export default function noop() {
   return null
