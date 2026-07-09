@@ -34,6 +34,7 @@ import { Page404 } from './Page404'
 import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
 import styles from './styles.module.css'
+import Utterances from './Utterances'
 
 // -----------------------------------------------------------------------------
 // dynamic imports for optional components
@@ -331,6 +332,12 @@ export function NotionPage({
         pageAside={pageAside}
         footer={<Footer />}
       />
+
+      {isBlogPost && (
+        <div className={styles.comments}>
+          <Utterances />
+        </div>
+      )}
     </>
   )
 }
