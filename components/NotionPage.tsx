@@ -330,14 +330,18 @@ export function NotionPage({
         mapImageUrl={mapImageUrl}
         searchNotion={config.isSearchEnabled ? searchNotion : undefined}
         pageAside={pageAside}
-        footer={<Footer />}
+        footer={
+          <Footer
+            comments={
+              isBlogPost ? (
+                <Utterances theme={isDarkMode ? 'github-dark' : 'github-light'} />
+              ) : (
+                undefined
+              )
+            }
+          />
+        }
       />
-
-      {isBlogPost && (
-        <div className={styles.comments}>
-          <Utterances />
-        </div>
-      )}
     </>
   )
 }
