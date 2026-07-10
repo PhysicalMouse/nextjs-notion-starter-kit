@@ -1,13 +1,15 @@
 import type * as types from 'notion-types'
 import cs from 'classnames'
 import * as React from 'react'
-import { Breadcrumbs, Search, useNotionContext } from 'react-notion-x'
+import { Breadcrumbs, useNotionContext } from 'react-notion-x'
 
 import { isSearchEnabled, navigationLinks } from '@/lib/config'
 import { MoonIcon } from '@/lib/icons/moon'
 import { SunIcon } from '@/lib/icons/sun'
 import { useDarkMode } from '@/lib/use-dark-mode'
 
+import searchStyles from './SearchModal.module.css'
+import { SearchModal } from './SearchModal'
 import styles from './styles.module.css'
 
 function ToggleThemeButton() {
@@ -29,6 +31,50 @@ function ToggleThemeButton() {
     >
       {hasMounted && isDarkMode ? <MoonIcon /> : <SunIcon />}
     </div>
+  )
+}
+
+function SearchButton() {
+  const [isOpen, setIsOpen] = React.useState(false)
+
+  const onOpen = React.useCallback(() => setIsOpen(true), [])
+  const onClose = React.useCallback(() => setIsOpen(false), [])
+
+  return (
+    <>
+      <div
+        className={cs(
+          'breadcrumb',
+          'button',
+          searchStyles.searchButton
+        )}
+        role='button'
+        tabIndex={0}
+        onClick={onOpen}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onOpen()
+          }
+        }}
+      >
+        <svg
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          strokeWidth='2'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          aria-hidden='true'
+        >
+          <circle cx='11' cy='11' r='8' />
+          <line x1='21' y1='21' x2='16.65' y2='16.65' />
+        </svg>
+        <span>搜索</span>
+      </div>
+
+      {isOpen && <SearchModal onClose={onClose} />}
+    </>
   )
 }
 
@@ -77,7 +123,7 @@ export function NotionPageHeader({
 
           <ToggleThemeButton />
 
-          {isSearchEnabled && <Search block={block} title={null} />}
+          {isSearchEnabled && <SearchButton />}
         </div>
       </div>
     </header>
