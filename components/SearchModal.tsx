@@ -92,7 +92,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
         }
       } catch (err: any) {
         if (!cancelled) {
-          setError(err?.message || '加载失败')
+          setError(err?.message || 'Failed to load')
           setIsLoading(false)
         }
       }
@@ -156,7 +156,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
       onClick={onClose}
       role='dialog'
       aria-modal='true'
-      aria-label='搜索'
+      aria-label='Search'
     >
       <div
         className={styles.modal}
@@ -169,10 +169,10 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
             ref={inputRef}
             className={styles.input}
             type='text'
-            placeholder='搜索文章、标签...'
+            placeholder='Search posts, tags...'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            aria-label='搜索关键词'
+            aria-label='Search keywords'
           />
           <button
             type='button'
@@ -185,7 +185,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
 
         {index && index.tags.length > 0 && (
           <div className={styles.tagsSection}>
-            <div className={styles.tagsLabel}>按标签筛选</div>
+            <div className={styles.tagsLabel}>Filter by tag</div>
             <div className={styles.tagList}>
               {index.tags.map((tag) => (
                 <button
@@ -207,11 +207,11 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
 
         <div className={styles.results}>
           {isLoading ? (
-            <div className={styles.status}>正在加载搜索索引...</div>
+            <div className={styles.status}>Loading search index...</div>
           ) : error ? (
-            <div className={styles.status}>加载失败：{error}</div>
+            <div className={styles.status}>Failed to load: {error}</div>
           ) : results.length === 0 ? (
-            <div className={styles.status}>没有找到匹配的内容</div>
+            <div className={styles.status}>No matching results found</div>
           ) : (
             results.map((item, i) => (
               <a
