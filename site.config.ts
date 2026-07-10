@@ -14,7 +14,7 @@ export default siteConfig({
   author: 'Physical Mouse',
 
   // open graph metadata (optional)
-  description: 'Example Next.js Notion Starter Kit Site',
+  description: 'Physical Mouse Blog',
 
   // social usernames (optional)
   twitter: 'transitive_bs',
