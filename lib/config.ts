@@ -142,14 +142,31 @@ export const apiHost = isDev
 
 export const apiBaseUrl = `/api`
 
-// Optional search-engine site verification codes (set via environment variables)
+// Optional search-engine site verification codes.
+// Configured in site.config.ts, with optional environment variable overrides.
 // Google Search Console: https://search.google.com/search-console
-export const googleSiteVerification = getEnv(
-  'GOOGLE_SITE_VERIFICATION',
-  null
-)
+export const googleSiteVerification: string | null =
+  getSiteConfig('googleSiteVerification', null) ||
+  getEnv('GOOGLE_SITE_VERIFICATION', null)
 // Bing Webmaster Tools: https://www.bing.com/webmasters
-export const bingSiteVerification = getEnv('BING_SITE_VERIFICATION', null)
+export const bingSiteVerification: string | null =
+  getSiteConfig('bingSiteVerification', null) ||
+  getEnv('BING_SITE_VERIFICATION', null)
+
+// Optional analytics. Configured in site.config.ts, with env var overrides.
+// Google Analytics 4 measurement id (e.g. 'G-XXXXXXXXXX')
+export const googleAnalyticsId: string | null =
+  getSiteConfig('googleAnalyticsId', null) ||
+  getEnv('NEXT_PUBLIC_GOOGLE_ANALYTICS_ID', null)
+// Vercel Web Analytics and Speed Insights (enabled by default)
+export const isVercelAnalyticsEnabled: boolean = getSiteConfig(
+  'isVercelAnalyticsEnabled',
+  true
+)
+export const isVercelSpeedInsightsEnabled: boolean = getSiteConfig(
+  'isVercelSpeedInsightsEnabled',
+  true
+)
 
 export const api = {
   searchNotion: `${apiBaseUrl}/search-notion`,

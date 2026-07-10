@@ -27,6 +27,15 @@ export interface SiteConfig {
   isRedisEnabled?: boolean
   isSearchEnabled?: boolean
 
+  // SEO: search-engine site verification codes (optional)
+  googleSiteVerification?: string | null
+  bingSiteVerification?: string | null
+
+  // analytics (optional)
+  googleAnalyticsId?: string | null
+  isVercelAnalyticsEnabled?: boolean
+  isVercelSpeedInsightsEnabled?: boolean
+
   includeNotionIdInUrls?: boolean
   pageUrlOverrides?: types.PageUrlOverridesMap | null
   pageUrlAdditions?: types.PageUrlOverridesMap | null

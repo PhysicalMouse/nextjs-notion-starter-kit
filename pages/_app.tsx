@@ -26,6 +26,8 @@ import {
   fathomConfig,
   fathomId,
   isServer,
+  isVercelAnalyticsEnabled,
+  isVercelSpeedInsightsEnabled,
   posthogConfig,
   posthogId
 } from '@/lib/config'
@@ -66,8 +68,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Component {...pageProps} />
-      <Analytics />
-      <SpeedInsights />
+      {isVercelAnalyticsEnabled && <Analytics />}
+      {isVercelSpeedInsightsEnabled && <SpeedInsights />}
     </>
   )
 }

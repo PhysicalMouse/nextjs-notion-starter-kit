@@ -33,6 +33,20 @@ export default siteConfig({
   // whether or not to enable support for LQIP preview images (optional)
   isPreviewImageSupportEnabled: true,
 
+  // SEO: search-engine site verification codes (optional)
+  // Bing Webmaster Tools: https://www.bing.com/webmasters
+  bingSiteVerification: '96B332BE8C0729927B4C665A4E31D77A',
+  // Google Search Console: https://search.google.com/search-console
+  // paste the content value from the "HTML tag" verification method here
+  googleSiteVerification: null,
+
+  // analytics (optional)
+  // Google Analytics 4 measurement id, e.g. 'G-XXXXXXXXXX'
+  googleAnalyticsId: 'G-CXY89KXMRM',
+  // Vercel Web Analytics and Speed Insights (enabled by default)
+  isVercelAnalyticsEnabled: true,
+  isVercelSpeedInsightsEnabled: true,
+
   // whether or not redis is enabled for caching generated preview images (optional)
   // NOTE: if you enable redis, you need to set the `REDIS_HOST` and `REDIS_PASSWORD`
   // environment variables. see the readme for more info

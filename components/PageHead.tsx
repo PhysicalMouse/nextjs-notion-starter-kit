@@ -123,16 +123,6 @@ export function PageHead({
       />
       <meta name='bingbot' content='index,follow' />
 
-      {config.googleSiteVerification && (
-        <meta
-          name='google-site-verification'
-          content={config.googleSiteVerification}
-        />
-      )}
-      {config.bingSiteVerification && (
-        <meta name='msvalidate.01' content={config.bingSiteVerification} />
-      )}
-
       <meta name='author' content={pageAuthor} />
       <meta property='og:type' content={pageType} />
       <meta property='og:locale' content={pageLanguage} />

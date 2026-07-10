@@ -1,14 +1,25 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document'
 
+import {
+  bingSiteVerification,
+  googleAnalyticsId,
+  googleSiteVerification
+} from '@/lib/config'
+
 export default class MyDocument extends Document {
   override render() {
     return (
       <Html lang='en'>
         <Head>
-          <meta
-            name='msvalidate.01'
-            content='96B332BE8C0729927B4C665A4E31D77A'
-          />
+          {bingSiteVerification && (
+            <meta name='msvalidate.01' content={bingSiteVerification} />
+          )}
+          {googleSiteVerification && (
+            <meta
+              name='google-site-verification'
+              content={googleSiteVerification}
+            />
+          )}
           <link rel='shortcut icon' href='/favicon-32x32.png' />
           <link
             rel='icon'
@@ -18,20 +29,24 @@ export default class MyDocument extends Document {
           />
 
           <link rel='manifest' href='/manifest.json' />
-          <script
-            async
-            src='https://www.googletagmanager.com/gtag/js?id=G-CXY89KXMRM'
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+          {googleAnalyticsId && (
+            <>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+              />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-CXY89KXMRM');
+gtag('config', '${googleAnalyticsId}');
 `
-            }}
-          />
+                }}
+              />
+            </>
+          )}
         </Head>
 
         <body>
