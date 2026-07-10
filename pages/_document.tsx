@@ -10,7 +10,7 @@ export default class MyDocument extends Document {
             content='96B332BE8C0729927B4C665A4E31D77A'
           />
           <link rel='shortcut icon' href='/favicon.png' />
-          <link rel='icon' type='image/png' sizes='32x32' href='favicon.png' />
+          <link rel='icon' type='image/png' sizes='32x32' href='/favicon.png' />
 
           <link rel='manifest' href='/manifest.json' />
           <script
