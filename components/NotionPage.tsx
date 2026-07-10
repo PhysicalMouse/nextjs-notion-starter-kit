@@ -281,9 +281,18 @@ export function NotionPage({
     block
   )
 
-  const socialDescription =
-    getPageProperty<string>('Description', block, recordMap) ||
-    config.description
+  // For blog posts: use the Notion page's own "Description" property first.
+  // If not set, fall back to "<title> — <site name>" so every article has a
+  // unique meta description instead of sharing the global site description.
+  // For the home page and other non-post pages: use the site-wide description.
+  const notionPageDescription = getPageProperty<string>(
+    'Description',
+    block,
+    recordMap
+  )
+  const socialDescription = isBlogPost
+    ? notionPageDescription || `${title} — ${site.name}`
+    : config.description
 
   const publishedTime = getPageProperty<string>('Published', block, recordMap)
   const modifiedTime = getPageProperty<string>('Last Edited', block, recordMap)
