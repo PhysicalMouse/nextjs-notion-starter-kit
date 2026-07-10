@@ -10,7 +10,7 @@ export default siteConfig({
 
   // basic site info (required)
   name: 'Physical Mouse Blog',
-  domain: 'Blog.cfambor.fun',
+  domain: 'blog.cfambor.fun',
   author: 'Physical Mouse',
 
   // open graph metadata (optional)
