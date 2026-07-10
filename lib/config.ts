@@ -142,6 +142,15 @@ export const apiHost = isDev
 
 export const apiBaseUrl = `/api`
 
+// Optional search-engine site verification codes (set via environment variables)
+// Google Search Console: https://search.google.com/search-console
+export const googleSiteVerification = getEnv(
+  'GOOGLE_SITE_VERIFICATION',
+  null
+)
+// Bing Webmaster Tools: https://www.bing.com/webmasters
+export const bingSiteVerification = getEnv('BING_SITE_VERIFICATION', null)
+
 export const api = {
   searchNotion: `${apiBaseUrl}/search-notion`,
   searchIndex: `${apiBaseUrl}/search-index`,

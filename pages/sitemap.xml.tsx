@@ -79,49 +79,58 @@ const getChangeFreq = (pathname: string) => {
 }
 
 const createSitemap = (siteMap: SiteMap) => {
+  const pageEntries = Object.entries(siteMap.canonicalPageMap)
+    .filter(([canonicalPagePath]) => Boolean(canonicalPagePath))
+    .toSorted(([a], [b]) => a.localeCompare(b))
+    .map(([canonicalPagePath, pageId]) => {
+      const loc = `${host}/${canonicalPagePath}`
+      const normalizedPath = canonicalPagePath.startsWith('/')
+        ? canonicalPagePath
+        : `/${canonicalPagePath}`
+
+      return {
+        loc,
+        lastmod: getLastModified(siteMap, pageId),
+        changefreq: getChangeFreq(normalizedPath),
+        priority: getPriority(normalizedPath)
+      }
+    })
+
+  // use the most recently edited page as the homepage's last-modified date so
+  // crawlers know the site as a whole has fresh content
+  const homeLastmod = pageEntries
+    .map((entry) => entry.lastmod)
+    .filter((value): value is string => Boolean(value))
+    .toSorted((a, b) => b.localeCompare(a))[0]
+
   const entries = [
     {
       loc: `${host}/`,
-      lastmod: undefined,
+      lastmod: homeLastmod,
       changefreq: 'daily',
       priority: '1.0'
     },
-    ...Object.entries(siteMap.canonicalPageMap)
-      .filter(([canonicalPagePath]) => Boolean(canonicalPagePath))
-      .toSorted(([a], [b]) => a.localeCompare(b))
-      .map(([canonicalPagePath, pageId]) => {
-        const loc = `${host}/${canonicalPagePath}`
-        const normalizedPath = canonicalPagePath.startsWith('/')
-          ? canonicalPagePath
-          : `/${canonicalPagePath}`
-
-        return {
-          loc,
-          lastmod: getLastModified(siteMap, pageId),
-          changefreq: getChangeFreq(normalizedPath),
-          priority: getPriority(normalizedPath)
-        }
-      })
+    ...pageEntries
   ]
 
-  return `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${entries
-      .map(({ loc, lastmod, changefreq, priority }) => {
-        const lastmodNode = lastmod
-          ? `\n      <lastmod>${escapeXml(lastmod)}</lastmod>`
-          : ''
+  const urlNodes = entries
+    .map(({ loc, lastmod, changefreq, priority }) => {
+      const lastmodNode = lastmod
+        ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>`
+        : ''
 
-        return `
-      <url>
-        <loc>${escapeXml(loc)}</loc>${lastmodNode}
-        <changefreq>${escapeXml(changefreq)}</changefreq>
-        <priority>${escapeXml(priority)}</priority>
-      </url>
-        `.trim()
-      })
-      .join('\n')}
-  </urlset>
+      return `  <url>
+    <loc>${escapeXml(loc)}</loc>${lastmodNode}
+    <changefreq>${escapeXml(changefreq)}</changefreq>
+    <priority>${escapeXml(priority)}</priority>
+  </url>`
+    })
+    .join('\n')
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlNodes}
+</urlset>
 `
 }
 

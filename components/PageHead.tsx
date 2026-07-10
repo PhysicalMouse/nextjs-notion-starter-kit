@@ -113,7 +113,26 @@ export function PageHead({
         key='theme-color-dark'
       />
 
-      <meta name='robots' content='index,follow' />
+      <meta
+        name='robots'
+        content='index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
+      />
+      <meta
+        name='googlebot'
+        content='index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
+      />
+      <meta name='bingbot' content='index,follow' />
+
+      {config.googleSiteVerification && (
+        <meta
+          name='google-site-verification'
+          content={config.googleSiteVerification}
+        />
+      )}
+      {config.bingSiteVerification && (
+        <meta name='msvalidate.01' content={config.bingSiteVerification} />
+      )}
+
       <meta name='author' content={pageAuthor} />
       <meta property='og:type' content={pageType} />
       <meta property='og:locale' content={pageLanguage} />

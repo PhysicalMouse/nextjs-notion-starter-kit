@@ -22,9 +22,22 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   if (process.env.VERCEL_ENV === 'production') {
     res.write(`User-agent: *
 Allow: /
-Disallow: /api/get-tweet-ast/*
-Disallow: /api/search-notion
+Disallow: /api/
 
+# Google (rich results + image indexing)
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+
+Host: ${host}
 Sitemap: ${host}/sitemap.xml
 `)
   } else {
