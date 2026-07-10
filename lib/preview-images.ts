@@ -13,6 +13,20 @@ import { defaultPageCover, defaultPageIcon } from './config'
 import { db } from './db'
 import { mapImageUrl } from './map-image-url'
 
+function isPreviewableUrl(url: string | undefined): url is string {
+  if (!url) return false
+  if (url.startsWith('data:')) return false
+  if (url.includes('/image/')) return false
+  if (url.includes('attachment:')) return false
+
+  try {
+    const parsedUrl = new URL(url)
+    return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export async function getPreviewImageMap(
   recordMap: ExtendedRecordMap
 ): Promise<PreviewImageMap> {
@@ -21,6 +35,7 @@ export async function getPreviewImageMap(
   })
     .concat([defaultPageIcon, defaultPageCover].filter(Boolean))
     .filter(Boolean)
+    .filter(isPreviewableUrl)
 
   const previewImagesMap = Object.fromEntries(
     await pMap(
@@ -42,6 +57,10 @@ async function createPreviewImage(
   url: string,
   { cacheKey }: { cacheKey: string }
 ): Promise<PreviewImage | null> {
+  if (!isPreviewableUrl(url)) {
+    return null
+  }
+
   try {
     try {
       const cachedPreviewImage = await db.get(cacheKey)
@@ -72,7 +91,8 @@ async function createPreviewImage(
 
     return previewImage
   } catch (err: any) {
-    console.warn('failed to create preview image', url, err.message)
+    const message = err instanceof Error ? err.message : String(err)
+    console.warn('failed to create preview image', url, message)
     return null
   }
 }
