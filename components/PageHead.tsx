@@ -83,7 +83,10 @@ export function PageHead({
     inLanguage: pageLanguage
   }
 
-  const structuredData = [websiteSchema, ...(isBlogPost ? [blogPostingSchema] : [])]
+  const structuredData = [
+    websiteSchema,
+    ...(isBlogPost ? [blogPostingSchema] : [])
+  ]
 
   return (
     <Head>

@@ -334,10 +334,10 @@ export function NotionPage({
           <Footer
             comments={
               isBlogPost ? (
-                <Utterances theme={isDarkMode ? 'github-dark' : 'github-light'} />
-              ) : (
-                undefined
-              )
+                <Utterances
+                  theme={isDarkMode ? 'github-dark' : 'github-light'}
+                />
+              ) : undefined
             }
           />
         }

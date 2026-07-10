@@ -19,7 +19,7 @@ export function Utterances({ theme = 'github-light' }: { theme?: string }) {
     script.setAttribute('theme', theme)
     script.crossOrigin = 'anonymous'
 
-    container.appendChild(script)
+    container.append(script)
 
     return () => {
       if (container) container.innerHTML = ''
