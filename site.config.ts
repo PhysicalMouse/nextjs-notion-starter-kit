@@ -9,7 +9,7 @@ export default siteConfig({
   rootNotionSpaceId: null,
 
   // basic site info (required)
-  name: 'PhysicalMouse\'s Blog',
+  name: "PhysicalMouse's Blog",
   domain: 'blog.cfambor.fun',
   author: 'Physical Mouse',
 
