@@ -38,7 +38,7 @@ export default siteConfig({
   bingSiteVerification: '96B332BE8C0729927B4C665A4E31D77A',
   // Google Search Console: https://search.google.com/search-console
   // paste the content value from the "HTML tag" verification method here
-  googleSiteVerification: null,
+  googleSiteVerification: '9gQof63B6fxt92-FiBLg4N0CZ1g0tRFtlCgf80-A54Q',
 
   // analytics (optional)
   // Google Analytics 4 measurement id, e.g. 'G-XXXXXXXXXX'
