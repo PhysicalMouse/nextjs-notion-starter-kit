@@ -14,7 +14,7 @@ export default siteConfig({
   author: 'Physical Mouse',
 
   // open graph metadata (optional)
-  description: 'description: 'PhysicalMouse\'s personal blog covering Blender 3D art, sculpting, creative practice, study notes, and travel stories.'',
+  description: 'PhysicalMouse\'s personal blog covering Blender 3D art, sculpting, creative practice, study notes, and travel stories.'',
 
   // social usernames (optional)
   twitter: 'transitive_bs',
