@@ -50,6 +50,8 @@ function SearchButton() {
         )}
         role='button'
         tabIndex={0}
+        aria-label='搜索'
+        title='搜索'
         onClick={onOpen}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -70,7 +72,6 @@ function SearchButton() {
           <circle cx='11' cy='11' r='8' />
           <line x1='21' y1='21' x2='16.65' y2='16.65' />
         </svg>
-        <span>搜索</span>
       </div>
 
       {isOpen && <SearchModal onClose={onClose} />}

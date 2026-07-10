@@ -111,8 +111,15 @@ const Code = dynamic(() =>
   })
 )
 
-const Collection = dynamic(() =>
-  import('react-notion-x/third-party/collection').then((m) => m.Collection)
+const Collection = dynamic(
+  () =>
+    import('react-notion-x/third-party/collection').then((m) => m.Collection),
+  {
+    // render collections (inline Notion databases) on the client only to avoid
+    // a react-notion-x server/client hydration mismatch. Individual blog post
+    // content still renders on the server, so article SEO is unaffected.
+    ssr: false
+  }
 )
 const Equation = dynamic(() =>
   import('react-notion-x/third-party/equation').then((m) => m.Equation)
@@ -254,14 +261,6 @@ export function NotionPage({
   }
 
   const title = getBlockTitle(block, recordMap) || site.name
-
-  console.log('notion page', {
-    isDev: config.isDev,
-    title,
-    pageId,
-    rootNotionPageId: site.rootNotionPageId,
-    recordMap
-  })
 
   if (!config.isServer) {
     // add important objects to the window global for easy debugging
