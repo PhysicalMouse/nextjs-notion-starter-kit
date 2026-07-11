@@ -27,13 +27,14 @@ export async function getSiteMap(): Promise<types.SiteMap> {
 }
 
 const getAllPages = pMemoize(getAllPagesImpl, {
-  cacheKey: (...args) => JSON.stringify(args)
+  cacheKey: (...args) => JSON.stringify(args),
+  maxAge: 5 * 60 * 1000 // re-fetch sitemap every 5 minutes so new pages are picked up
 })
 
 const getPage = async (pageId: string, opts?: any) => {
   console.log('\nnotion getPage', uuidToId(pageId))
   return notion.getPage(pageId, {
-    kyOptions: {
+    ofetchOptions: {
       timeout: 30_000
     },
     ...opts
