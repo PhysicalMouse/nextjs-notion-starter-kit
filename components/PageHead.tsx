@@ -142,10 +142,6 @@ export function PageHead({
       )}
       {pageAuthor && <meta property='article:author' content={pageAuthor} />}
 
-      {config.twitter && (
-        <meta name='twitter:creator' content={`@${config.twitter}`} />
-      )}
-
       {pageDescription && (
         <>
           <meta name='description' content={pageDescription} />

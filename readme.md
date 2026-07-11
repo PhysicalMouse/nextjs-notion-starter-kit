@@ -31,7 +31,6 @@ All site-level configuration is managed in `site.config.ts`. Do **not** use envi
 | `domain` | 部署域名 / Deployed domain |
 | `author` | 作者名 / Author name |
 | `description` | SEO 描述 / SEO description |
-| `twitter` / `github` / `linkedin` | 社交账号（改成自己的）/ Social accounts (update to your own) |
 | `isPreviewImageSupportEnabled` | 开启 LQIP 预览图（需配合 Redis）/ Enable LQIP preview images (requires Redis) |
 | `isRedisEnabled` | 开启 Redis 缓存，在此处切换，**不用环境变量控制** / Enable Redis caching — toggle here, not via env var |
 | `isVercelAnalyticsEnabled` | 开启 Vercel Web Analytics / Enable Vercel Web Analytics |
@@ -49,7 +48,6 @@ Secrets and credentials are managed **only** via environment variables, configur
 
 | 变量名 / Variable | 必填 / Required | 说明 / Description |
 |---|---|---|
-| `NOTION_API_TOKEN` | 是 / Yes | Notion 账号的非官方私钥，供 `notion-client` 使用。**不是**官方 Integration Token。在浏览器 DevTools → Application → Cookies 中找到 `token_v2` 字段值复制。<br>The unofficial private key for `notion-client`. **Not** the official Integration Token. Copy the `token_v2` cookie value from browser DevTools → Application → Cookies. |
 | `REDIS_URL` | `isRedisEnabled: true` 时必填 | Redis 连接字符串，格式 `rediss://user:pass@host:port`（TLS）或 `redis://user:pass@host:port`<br>Redis connection string, e.g. `rediss://user:pass@host:port` |
 
 > **注意 / Note:** `REDIS_URL` 属于 Sensitive 类型，Vercel CLI 不会将其拉取到本地。请手动添加到 `.env.development.local`，或通过 Vercel Dashboard → Settings → Environment Variables 设置。
@@ -95,5 +93,4 @@ pnpm dev
 - **首页数据量较大** — 首页 Gallery 视图会将所有文章完整数据一次性返回（约 267 kB），这是 `react-notion-x` 架构的固有特性，不影响功能。
   The homepage Gallery returns all articles' full data at once (~267 kB). This is inherent to the `react-notion-x` architecture and does not affect functionality.
 
-- **社交链接需自行更新** — `site.config.ts` 中 `twitter`、`github`、`linkedin` 默认为原项目作者信息，部署前记得改成自己的。
-  The `twitter`, `github`, `linkedin` fields in `site.config.ts` default to the original author's info — update them before deploying.
+

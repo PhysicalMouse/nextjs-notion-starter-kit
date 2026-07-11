@@ -1,13 +1,9 @@
 import { type Block, type ExtendedRecordMap } from 'notion-types'
 
-import { getPageTweet } from '@/lib/get-page-tweet'
-
-import { PageActions } from './PageActions'
-
 export function PageAside({
   block,
-  recordMap,
-  isBlogPost
+  recordMap: _recordMap,
+  isBlogPost: _isBlogPost
 }: {
   block: Block
   recordMap: ExtendedRecordMap
@@ -15,16 +11,6 @@ export function PageAside({
 }) {
   if (!block) {
     return null
-  }
-
-  // only display comments and page actions on blog post pages
-  if (isBlogPost) {
-    const tweet = getPageTweet(block, recordMap)
-    if (!tweet) {
-      return null
-    }
-
-    return <PageActions tweet={tweet} />
   }
 
   return null
