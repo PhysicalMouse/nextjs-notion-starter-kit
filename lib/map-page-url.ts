@@ -9,19 +9,40 @@ import { type Site } from './types'
 // (they're nice for debugging and speed up local dev)
 const uuid = !!includeNotionIdInUrls
 
+/**
+ * Returns the URL path for a given pageId within the recordMap.
+ *
+ * Sub-pages (parent_table === 'block') are nested under their parent slug,
+ * e.g. /blog-post-slug/sub-page-slug. Blog posts and top-level pages keep
+ * their existing flat /slug path.
+ *
+ * @param parentPath - the current page's own slug (used as prefix for children)
+ */
 export const mapPageUrl =
-  (site: Site, recordMap: ExtendedRecordMap, searchParams: URLSearchParams) =>
+  (
+    site: Site,
+    recordMap: ExtendedRecordMap,
+    searchParams: URLSearchParams,
+    parentPath?: string
+  ) =>
   (pageId = '') => {
     const pageUuid = parsePageId(pageId, { uuid: true })!
 
     if (uuidToId(pageUuid) === site.rootNotionPageId) {
       return createUrl('/', searchParams)
-    } else {
-      return createUrl(
-        `/${getCanonicalPageId(pageUuid, recordMap, { uuid })}`,
-        searchParams
-      )
     }
+
+    const slug = getCanonicalPageId(pageUuid, recordMap, { uuid })
+
+    // If this page is a sub-page (parent_table === 'block'), nest it under
+    // the current page's path so links render as /parent-slug/child-slug.
+    const blockRecord = recordMap.block?.[pageUuid]
+    const block = (blockRecord as any)?.value ?? blockRecord
+    if (block && (block as any).parent_table === 'block' && parentPath) {
+      return createUrl(`/${parentPath}/${slug}`, searchParams)
+    }
+
+    return createUrl(`/${slug}`, searchParams)
   }
 
 export const getCanonicalPageUrl =
