@@ -57,6 +57,11 @@
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   grid-gap: 6vmin;
   gap: 6vmin;
+  /* each row's height is driven only by the tallest card in THAT row,
+     instead of the global tallest card (react-notion-x defaults to 1fr).
+     This lets short rows shrink to their content while same-row cards
+     stay equal height and the next row follows immediately. */
+  grid-auto-rows: auto;
 }
 
 .notion-gallery-grid .notion-page-icon-inline {
