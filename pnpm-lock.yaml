@@ -17,9 +17,6 @@ importers:
       '@keyvhq/redis':
         specifier: ^1.6.10
         version: 1.6.28
-      '@notionhq/client':
-        specifier: ^5.23.0
-        version: 5.23.0
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.2.0(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
@@ -50,9 +47,6 @@ importers:
       notion-client:
         specifier: ^7.10.0
         version: 7.10.0
-      notion-compat:
-        specifier: ^7.10.0
-        version: 7.10.0(@notionhq/client@5.23.0)
       notion-types:
         specifier: ^7.10.0
         version: 7.10.0
@@ -651,10 +645,6 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
-
-  '@notionhq/client@5.23.0':
-    resolution: {integrity: sha512-vTlkart40A89+l7+aRGNXLr+z3Af94dbaj/PFtommcwqCxWF9aByXmKgCGteD77It8u4ePE1DSL8eIVSANFGPg==}
-    engines: {node: '>=18'}
 
   '@opentelemetry/api-logs@0.208.0':
     resolution: {integrity: sha512-CjruKY9V6NMssL/T1kAFgzosF1v9o6oeN+aX5JB/C/xPNtmgIJqcXHG7fA82Ou1zCpWGl4lROQUKwUNE1pMCyg==}
@@ -2002,12 +1992,6 @@ packages:
     resolution: {integrity: sha512-Rb4/nR4vIRwIExvKiVhZKJEpGoE0IRFlHMKbs0tcZcecZaUVRzVAu7PHuaHC5ivSds26z497dxXYF3mnMrMt7g==}
     engines: {node: '>=18'}
 
-  notion-compat@7.10.0:
-    resolution: {integrity: sha512-htK3pXSxKObyAPT3goQOlQHw/SG90ExqaI9YY5mPx+GY77tP4naSNLtnY1DdKzkDAMtNlRXxobBDE4IkBbl9WA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@notionhq/client': ^2.2.0
-
   notion-types@7.10.0:
     resolution: {integrity: sha512-t57RdnGnup7NcMGJkrlshe3gXaFYOj565NL1Q1l/MrZZ/K2xbHO06PtBXDEFTFYjvxQagU0NzKzaSNKocU9e4Q==}
     engines: {node: '>=18'}
@@ -3179,8 +3163,6 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@16.2.0':
     optional: true
-
-  '@notionhq/client@5.23.0': {}
 
   '@opentelemetry/api-logs@0.208.0':
     dependencies:
@@ -4639,13 +4621,6 @@ snapshots:
       notion-utils: 7.10.0
       ofetch: 1.5.1
       p-map: 7.0.4
-
-  notion-compat@7.10.0(@notionhq/client@5.23.0):
-    dependencies:
-      '@notionhq/client': 5.23.0
-      notion-types: 7.10.0
-      notion-utils: 7.10.0
-      p-queue: 8.1.1
 
   notion-types@7.10.0: {}
 
