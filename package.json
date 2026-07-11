@@ -31,6 +31,7 @@
     "@fisch0920/use-dark-mode": "^2.4.0",
     "@keyvhq/core": "^1.6.9",
     "@keyvhq/redis": "^1.6.10",
+    "@notionhq/client": "^5.23.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "classnames": "^2.5.1",
@@ -41,6 +42,7 @@
     "lqip-modern": "^2.2.1",
     "next": "^16.2.0",
     "notion-client": "^7.10.0",
+    "notion-compat": "^7.10.0",
     "notion-types": "^7.10.0",
     "notion-utils": "^7.10.0",
     "p-map": "^7.0.4",
@@ -74,7 +76,11 @@
     }
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["canvas", "core-js", "protobufjs"]
+    "onlyBuiltDependencies": [
+      "canvas",
+      "core-js",
+      "protobufjs"
+    ]
   },
   "prettier": "@fisch0920/config/prettier",
   "simple-git-hooks": {
