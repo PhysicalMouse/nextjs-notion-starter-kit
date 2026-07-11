@@ -9,11 +9,7 @@ import { type PageProps, type Params } from '@/lib/types'
 export const getStaticProps: GetStaticProps<PageProps, Params> = async (
   context
 ) => {
-  // params.pageId is string[] for catch-all routes — take the last segment
-  const segments = context.params?.pageId
-  const rawPageId = Array.isArray(segments)
-    ? segments[segments.length - 1]!
-    : (segments as string)
+  const rawPageId = context.params?.pageId as string
 
   try {
     const props = await resolveNotionPage(domain, rawPageId)
@@ -48,13 +44,11 @@ export async function getStaticPaths() {
   ]
 
   const staticPaths = {
-    // catch-all routes require pageId as string[]
-    paths: allPageIds.map((pageId) => ({
-      params: { pageId: pageId.split('/').filter(Boolean) }
-    })),
+    paths: allPageIds.map((pageId) => ({ params: { pageId } })),
     fallback: true
   }
 
+  console.log(staticPaths.paths)
   return staticPaths
 }
 

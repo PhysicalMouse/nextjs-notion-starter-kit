@@ -227,22 +227,8 @@ export function NotionPage({
     if (lite) params.lite = lite
 
     const searchParams = new URLSearchParams(params)
-
-    // Derive the parent path from the router so sub-page links are nested.
-    // router.query.pageId is string[] for catch-all routes.
-    // For /blog-post/sub-page the segments are ['blog-post', 'sub-page'];
-    // we want the second-to-last segment as the prefix for any children.
-    const segments = router.query.pageId
-    const segmentArr = Array.isArray(segments) ? segments : segments ? [segments] : []
-    // parentPath is all segments except the last (the current page's own slug)
-    const parentPath = segmentArr.length > 1
-      ? segmentArr.slice(0, -1).join('/')
-      : segmentArr[0]
-
-    return site
-      ? mapPageUrl(site, recordMap!, searchParams, parentPath)
-      : undefined
-  }, [site, recordMap, lite, router.query.pageId])
+    return site ? mapPageUrl(site, recordMap!, searchParams) : undefined
+  }, [site, recordMap, lite])
 
   const keys = Object.keys(recordMap?.block || {})
   const block = getBlockValue(recordMap?.block?.[keys[0]!])
