@@ -57,7 +57,7 @@
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   grid-gap: 6vmin;
   gap: 6vmin;
-  align-items: start;
+  align-items: stretch;
 }
 
 .notion-gallery-grid .notion-page-icon-inline {
@@ -108,6 +108,7 @@
 
 .notion-collection-card-body {
   padding: 10px;
+  flex: 1;
 }
 
 /* only target safari */
