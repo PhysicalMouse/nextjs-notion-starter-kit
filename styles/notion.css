@@ -404,10 +404,10 @@
   align-items: center;
 }
 
-/* Homepage: align avatar and title side by side on the same row.
-   Both .notion-page-icon-hero and .notion-title are siblings inside
-   .notion-page. We pull the title up with a negative margin-top so it
-   overlaps with the icon row, then pad it left to clear the icon width. */
+/* Homepage: add breathing room below the cover, then place the avatar
+   in that space with the title stacked left-aligned underneath.
+   The icon defaults to absolute (floating over the cover); we put it back
+   into the normal document flow so the extra top spacing takes effect. */
 .index-page .notion-page-icon-hero {
   position: relative;
   top: auto;
@@ -415,27 +415,21 @@
   transform: none;
   margin-left: 0;
   margin-right: 0;
+  /* space between the cover image and the avatar */
+  margin-top: 40px !important;
   margin-bottom: 0;
 }
 
 .index-page .notion-page-icon-hero.notion-page-icon-image {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
 }
 
 .index-page .notion-title {
-  display: flex;
-  align-items: center;
-  min-height: 80px;
-  padding-left: 100px; /* 80px icon + 20px gap */
+  display: block;
   text-align: left;
-  /* pull title up to sit beside the icon */
-  margin-top: -142px !important;
-}
-
-.index-page .notion-page-icon-hero.notion-page-icon-image {
-  width: 80px;
-  height: 80px;
+  padding-left: 0;
+  margin-top: 20px;
 }
 
 .index-page .notion-title {
