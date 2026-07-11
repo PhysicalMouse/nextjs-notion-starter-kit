@@ -112,27 +112,11 @@ export const isSearchEnabled: boolean = getSiteConfig('isSearchEnabled', true)
 
 // ----------------------------------------------------------------------------
 
-// Optional redis instance for persisting preview images
-export const isRedisEnabled: boolean =
-  getSiteConfig('isRedisEnabled', false) || !!getEnv('REDIS_ENABLED', null)
-
-// If REDIS_URL is provided directly, REDIS_HOST/REDIS_PASSWORD are not required.
-// If REDIS_URL is absent, REDIS_HOST is required when redis is enabled.
-const redisUrlDirect = getEnv('REDIS_URL', null)
-export const redisHost = getEnv(
-  'REDIS_HOST',
-  isRedisEnabled && !redisUrlDirect ? undefined : null
-)
-export const redisPassword = getEnv(
-  'REDIS_PASSWORD',
-  isRedisEnabled && !redisUrlDirect ? undefined : null
-)
-export const redisUser: string = getEnv('REDIS_USER', 'default')
-export const redisUrl =
-  redisUrlDirect ??
-  (isRedisEnabled
-    ? `redis://${redisUser}:${redisPassword}@${redisHost}`
-    : null)
+// Optional redis instance for persisting preview images.
+// Toggle via site.config.ts `isRedisEnabled`.
+// The connection URL is a private credential — set it via the REDIS_URL env var.
+export const isRedisEnabled: boolean = getSiteConfig('isRedisEnabled', false)
+export const redisUrl = getEnv('REDIS_URL', isRedisEnabled ? undefined : null)
 export const redisNamespace = getEnv('REDIS_NAMESPACE', 'preview-images')
 
 // ----------------------------------------------------------------------------
