@@ -16,6 +16,44 @@ import { getTweetsMap } from './get-tweets'
 import { notion } from './notion-api'
 import { getPreviewImageMap } from './preview-images'
 
+// ---------------------------------------------------------------------------
+// Server-side in-memory page cache
+// ---------------------------------------------------------------------------
+// Caches the fully-assembled ExtendedRecordMap for each pageId so that:
+//   1. Repeated requests within the TTL window never hit Notion at all.
+//   2. If Notion is temporarily down, we can return the last-known-good data
+//      (stale-while-revalidate pattern).
+// The TTL is intentionally short (60 s) so fresh edits propagate quickly
+// while still absorbing sudden traffic spikes or Notion hiccups.
+
+const PAGE_CACHE_TTL_MS = 60_000 // 60 seconds
+
+interface CacheEntry {
+  recordMap: ExtendedRecordMap
+  expiresAt: number
+}
+
+const pageCache = new Map<string, CacheEntry>()
+
+function getCached(pageId: string): ExtendedRecordMap | null {
+  const entry = pageCache.get(pageId)
+  if (!entry) return null
+  if (Date.now() < entry.expiresAt) return entry.recordMap
+  // entry is stale but we keep it for potential fallback use
+  return null
+}
+
+function getStaleCached(pageId: string): ExtendedRecordMap | undefined {
+  return pageCache.get(pageId)?.recordMap
+}
+
+function setCached(pageId: string, recordMap: ExtendedRecordMap): void {
+  pageCache.set(pageId, {
+    recordMap,
+    expiresAt: Date.now() + PAGE_CACHE_TTL_MS
+  })
+}
+
 const getNavigationLinkPages = pMemoize(
   async (): Promise<ExtendedRecordMap[]> => {
     const navigationLinkPageIds = (navigationLinks || [])
@@ -121,7 +159,27 @@ async function fixCollectionQueries(recordMap: ExtendedRecordMap) {
 }
 
 export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
-  let recordMap = await notion.getPage(pageId)
+  // Return a fresh cached entry immediately if available
+  const cached = getCached(pageId)
+  if (cached) return cached
+
+  let recordMap: ExtendedRecordMap
+
+  try {
+    recordMap = await notion.getPage(pageId)
+  } catch (err: any) {
+    // If Notion is unreachable, fall back to a potentially stale cached entry
+    // so the site keeps serving instead of showing a 500.
+    const stale = getStaleCached(pageId)
+    if (stale) {
+      console.warn(
+        `[notion] getPage failed for ${pageId}, serving stale cache:`,
+        err?.message
+      )
+      return stale
+    }
+    throw err
+  }
 
   if (navigationStyle !== 'default') {
     // ensure that any pages linked to in the custom navigation header have
@@ -148,6 +206,9 @@ export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
   }
 
   await getTweetsMap(recordMap)
+
+  // Store in cache for subsequent requests and stale fallback
+  setCached(pageId, recordMap)
 
   return recordMap
 }
