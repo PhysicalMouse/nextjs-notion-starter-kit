@@ -46,7 +46,7 @@ Secrets and credentials are managed **only** via environment variables, set in V
 
 | 变量名 / Variable | 必填 / Required | 说明 / Description |
 |---|---|---|
-| `NOTION_API_TOKEN` | 是 / Yes | Notion Integration Token（`ntn_xxx` 格式）|
+| `NOTION_API_TOKEN` | 是 / Yes | Notion 账号的非官方 `token_v2` cookie 值（用于 `notion-client` 非官方 API）。在浏览器开发者工具的 Cookies 中找到 `token_v2` 字段复制。<br>The unofficial `token_v2` cookie from your Notion account (used by `notion-client`). Find it in browser DevTools → Application → Cookies → `token_v2`. |
 | `REDIS_URL` | Redis 启用时必填 / Required if Redis enabled | Redis 连接字符串，格式 `rediss://user:pass@host:port` |
 
 > **注意 / Note:** `REDIS_URL` 属于 Sensitive 类型，Vercel CLI 不会将其拉取到本地环境。请手动添加到 `.env.development.local`（本地开发），或通过 Vercel Dashboard 设置（生产/预览）。
