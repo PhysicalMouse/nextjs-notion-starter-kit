@@ -252,46 +252,6 @@ export function NotionPage({
     [block, recordMap, isBlogPost]
   )
 
-  // Inject the page description inside .notion-collection-page-properties.
-  // Collection is loaded client-side only (ssr:false), so we use a
-  // MutationObserver to wait for the container to appear in the DOM.
-  React.useEffect(() => {
-    if (!isBlogPost || !block || !recordMap) return
-
-    const desc = getPageProperty<string>('Description', block, recordMap)
-    if (!desc) return
-
-    const inject = (container: Element) => {
-      const existing = document.getElementById('post-description-block')
-      if (existing) existing.remove()
-      const el = document.createElement('div')
-      el.id = 'post-description-block'
-      el.className = 'post-description-block'
-      el.textContent = desc
-      container.insertBefore(el, container.firstChild)
-    }
-
-    // If the container is already in the DOM (e.g. navigating back), inject immediately
-    const existing = document.querySelector('.notion-collection-page-properties')
-    if (existing) {
-      inject(existing)
-      return
-    }
-
-    // Otherwise observe the DOM until it appears (Collection is lazy-loaded)
-    const observer = new MutationObserver(() => {
-      const container = document.querySelector(
-        '.notion-collection-page-properties'
-      )
-      if (container) {
-        observer.disconnect()
-        inject(container)
-      }
-    })
-    observer.observe(document.body, { childList: true, subtree: true })
-    return () => observer.disconnect()
-  }, [isBlogPost, block, recordMap])
-
   if (router.isFallback) {
     return <Loading />
   }

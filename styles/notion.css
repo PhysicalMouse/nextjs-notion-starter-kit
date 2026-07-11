@@ -420,16 +420,6 @@
    Blog post metadata: left-align and reorder to Description → Tags → Author → Date
    ----------------------------------------------------------------------- */
 
-/* description injected above the collection-row */
-.post-description-block {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--fg-color-2);
-  margin-bottom: 0.75em;
-  text-align: left;
-  white-space: pre-line;
-}
-
 /* left-align the whole metadata block */
 .notion-collection-page-properties {
   display: flex;
@@ -462,14 +452,28 @@
   display: none;
 }
 
-/* reorder: Tags first, then Author, then Published (date) */
-.notion-collection-row-property:has(.notion-property-multi_select) {
+/* Notion schema order is Description(1) → Tags(2) → Author(3) → Published(4).
+   Reorder to Description → Tags → Author → Date. Using nth-child keeps the
+   native property rendering so the description shares the exact same font as
+   the author/date text below it. */
+.notion-collection-row-property:nth-child(1) {
+  order: 0;
+} /* Description */
+.notion-collection-row-property:nth-child(2) {
   order: 1;
-}
-.notion-collection-row-property:has(.notion-property-person),
-.notion-collection-row-property:has(.notion-property-text) {
+} /* Tags */
+.notion-collection-row-property:nth-child(3) {
   order: 2;
-}
-.notion-collection-row-property:has(.notion-property-date) {
+} /* Author */
+.notion-collection-row-property:nth-child(4) {
   order: 3;
+} /* Published (date) */
+
+/* muted gray styling for the Description property, keep line breaks */
+.notion-collection-row-property:nth-child(1) {
+  color: var(--fg-color-3);
+  margin-bottom: 0.5em;
+}
+.notion-collection-row-property:nth-child(1) .notion-property {
+  white-space: pre-line;
 }
