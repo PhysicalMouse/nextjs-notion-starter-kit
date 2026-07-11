@@ -10,31 +10,21 @@ import { db } from './db'
 export async function getTweetsMap(
   recordMap: ExtendedRecordMap
 ): Promise<void> {
-  let tweetIds: string[]
+  const tweetIds = getPageTweetIds(recordMap)
 
-  try {
-    tweetIds = getPageTweetIds(recordMap)
-  } catch (err: any) {
-    console.warn('[tweets] getPageTweetIds failed (non-fatal):', err?.message)
-    return
-  }
-
-  if (!tweetIds?.length) return
-
-  const pairs = await pMap(
-    tweetIds,
-    async (tweetId: string) => {
-      try {
-        return [tweetId, await getTweet(tweetId)] as const
-      } catch (err: any) {
-        console.warn('[tweets] failed to fetch tweet', tweetId, err?.message)
-        return [tweetId, null] as const
+  const tweetsMap = Object.fromEntries(
+    await pMap(
+      tweetIds,
+      async (tweetId: string) => {
+        return [tweetId, await getTweet(tweetId)]
+      },
+      {
+        concurrency: 8
       }
-    },
-    { concurrency: 4 }
+    )
   )
 
-  ;(recordMap as ExtendedTweetRecordMap).tweets = Object.fromEntries(pairs)
+  ;(recordMap as ExtendedTweetRecordMap).tweets = tweetsMap
 }
 
 async function getTweetImpl(tweetId: string): Promise<Tweet | null> {
@@ -53,15 +43,7 @@ async function getTweetImpl(tweetId: string): Promise<Tweet | null> {
       console.warn(`redis error get "${cacheKey}"`, err.message)
     }
 
-    // getTweetData throws on non-2xx — may throw a Response object rather than
-    // an Error when X's syndication API rate-limits or blocks the request.
-    let tweetData: Tweet | null = null
-    try {
-      tweetData = (await getTweetData(tweetId)) || null
-    } catch {
-      // X API is unreliable — treat as a cache miss so the oEmbed widget is used
-      return null
-    }
+    const tweetData = (await getTweetData(tweetId)) || null
 
     try {
       await db.set(cacheKey, tweetData)

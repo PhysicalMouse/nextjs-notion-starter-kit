@@ -205,14 +205,7 @@ export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
     ;(recordMap as any).preview_images = previewImageMap
   }
 
-  try {
-    await getTweetsMap(recordMap)
-  } catch (err: any) {
-    // Twitter/X syndication API is unreliable — do not let tweet fetch
-    // failures crash the entire page. The Tweet component falls back to
-    // the native oEmbed widget when no data is available.
-    console.warn('[notion] getTweetsMap failed (non-fatal):', err?.message)
-  }
+  await getTweetsMap(recordMap)
 
   // Store in cache for subsequent requests and stale fallback
   setCached(pageId, recordMap)
