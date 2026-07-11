@@ -410,3 +410,60 @@
 .notion-equation.notion-equation-block{
   align-items: center;
 }
+
+/* -----------------------------------------------------------------------
+   Blog post metadata: left-align and reorder to Description → Tags → Author → Date
+   ----------------------------------------------------------------------- */
+
+/* description injected above the collection-row */
+.post-description-block {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--fg-color-2);
+  margin-bottom: 0.75em;
+  text-align: left;
+}
+
+/* left-align the whole metadata block */
+.notion-collection-page-properties {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.notion-collection-row {
+  border-top: none !important;
+  justify-content: flex-start;
+}
+
+.notion-collection-row-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25em;
+}
+
+.notion-collection-row-property {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5em;
+}
+
+/* hide the property label column (Tags / Published / Author) */
+.notion-collection-row-property .notion-collection-column-title {
+  display: none;
+}
+
+/* reorder: Tags first, then Author, then Published (date) */
+.notion-collection-row-property:has(.notion-property-multi_select) {
+  order: 1;
+}
+.notion-collection-row-property:has(.notion-property-person),
+.notion-collection-row-property:has(.notion-property-text) {
+  order: 2;
+}
+.notion-collection-row-property:has(.notion-property-date) {
+  order: 3;
+}

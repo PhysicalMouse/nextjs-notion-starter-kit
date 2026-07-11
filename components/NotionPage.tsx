@@ -252,6 +252,32 @@ export function NotionPage({
     [block, recordMap, isBlogPost]
   )
 
+  // Inject the page description above the collection-row metadata block on
+  // blog post pages. Must be declared before any conditional returns to satisfy
+  // the Rules of Hooks. When block or recordMap is unavailable the effect is
+  // a no-op so it's safe to call unconditionally.
+  React.useEffect(() => {
+    if (!isBlogPost || !block || !recordMap) return
+
+    const desc = getPageProperty<string>('Description', block, recordMap)
+    if (!desc) return
+
+    const container = document.querySelector(
+      '.notion-collection-page-properties'
+    )
+    if (!container) return
+
+    const existing = document.getElementById('post-description-block')
+    if (existing) existing.remove()
+
+    const el = document.createElement('div')
+    el.id = 'post-description-block'
+    el.className = 'post-description-block'
+    el.textContent = desc
+    // Insert inside the container, before the first .notion-collection-row
+    container.insertBefore(el, container.firstChild)
+  })
+
   if (router.isFallback) {
     return <Loading />
   }
