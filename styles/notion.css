@@ -469,9 +469,8 @@
   order: 3;
 } /* Published (date) */
 
-/* muted gray styling for the Description property, keep line breaks */
+/* Description property: keep line breaks, default text color */
 .notion-collection-row-property:nth-child(1) {
-  color: var(--fg-color-3);
   margin-bottom: 0.5em;
 }
 .notion-collection-row-property:nth-child(1) .notion-property {
