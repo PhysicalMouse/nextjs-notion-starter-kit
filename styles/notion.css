@@ -422,6 +422,7 @@
   color: var(--fg-color-2);
   margin-bottom: 0.75em;
   text-align: left;
+  white-space: pre-line;
 }
 
 /* left-align the whole metadata block */
