@@ -162,13 +162,20 @@
 }
 
 .notion .notion-page-icon-cover {
-  margin-left: auto;
+  margin-left: 0;
   margin-right: auto;
+}
+
+/* left-align the hero avatar with the page content instead of centering it */
+.notion-page-icon-hero {
+  left: 16px !important;
+  margin-left: 0 !important;
+  transform: none !important;
 }
 
 .notion-title {
   display: block;
-  text-align: center;
+  text-align: left;
 }
 
 .notion-collection-row {
