@@ -73,6 +73,9 @@
       "keyv": "npm:@keyvhq/core@~1.6.6"
     }
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["canvas", "core-js", "protobufjs"]
+  },
   "prettier": "@fisch0920/config/prettier",
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
