@@ -116,18 +116,23 @@ export const isSearchEnabled: boolean = getSiteConfig('isSearchEnabled', true)
 export const isRedisEnabled: boolean =
   getSiteConfig('isRedisEnabled', false) || !!getEnv('REDIS_ENABLED', null)
 
-// (if you want to enable redis, only REDIS_HOST and REDIS_PASSWORD are required)
-// we recommend that you store these in a local `.env` file
-export const redisHost = getEnv('REDIS_HOST', isRedisEnabled ? undefined : null)
+// If REDIS_URL is provided directly, REDIS_HOST/REDIS_PASSWORD are not required.
+// If REDIS_URL is absent, REDIS_HOST is required when redis is enabled.
+const redisUrlDirect = getEnv('REDIS_URL', null)
+export const redisHost = getEnv(
+  'REDIS_HOST',
+  isRedisEnabled && !redisUrlDirect ? undefined : null
+)
 export const redisPassword = getEnv(
   'REDIS_PASSWORD',
-  isRedisEnabled ? undefined : null
+  isRedisEnabled && !redisUrlDirect ? undefined : null
 )
 export const redisUser: string = getEnv('REDIS_USER', 'default')
-export const redisUrl = getEnv(
-  'REDIS_URL',
-  isRedisEnabled ? `redis://${redisUser}:${redisPassword}@${redisHost}` : null
-)
+export const redisUrl =
+  redisUrlDirect ??
+  (isRedisEnabled
+    ? `redis://${redisUser}:${redisPassword}@${redisHost}`
+    : null)
 export const redisNamespace = getEnv('REDIS_NAMESPACE', 'preview-images')
 
 // ----------------------------------------------------------------------------
