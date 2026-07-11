@@ -17,7 +17,7 @@ import {
   NotionRenderer,
   useNotionContext
 } from 'react-notion-x'
-import { EmbeddedTweet, TweetNotFound, TweetSkeleton } from 'react-tweet'
+import { EmbeddedTweet, TweetSkeleton } from 'react-tweet'
 import { useSearchParam } from 'react-use'
 
 import type * as types from '@/lib/types'
@@ -145,10 +145,48 @@ function Tweet({ id }: { id: string }) {
   const { recordMap } = useNotionContext()
   const tweet = (recordMap as types.ExtendedTweetRecordMap)?.tweets?.[id]
 
+  // If we have server-fetched tweet data, use react-tweet's rich renderer.
+  // Otherwise fall back to the native Twitter/X oEmbed widget which loads
+  // entirely client-side via platform.twitter.com/widgets.js — no API key
+  // needed and immune to X's syndication API rate limits.
+  if (tweet) {
+    return (
+      <React.Suspense fallback={<TweetSkeleton />}>
+        <EmbeddedTweet tweet={tweet} />
+      </React.Suspense>
+    )
+  }
+
+  return <TweetOEmbed id={id} />
+}
+
+function TweetOEmbed({ id }: { id: string }) {
+  const tweetUrl = `https://twitter.com/i/web/status/${id}`
+
+  React.useEffect(() => {
+    // Load (or re-process) the Twitter widget script so it renders the blockquote
+    const win = window as any
+    if (win.twttr?.widgets) {
+      win.twttr.widgets.load()
+    } else {
+      const script = document.createElement('script')
+      script.src = 'https://platform.twitter.com/widgets.js'
+      script.async = true
+      script.charset = 'utf-8'
+      document.body.appendChild(script)
+    }
+  }, [id])
+
   return (
-    <React.Suspense fallback={<TweetSkeleton />}>
-      {tweet ? <EmbeddedTweet tweet={tweet} /> : <TweetNotFound />}
-    </React.Suspense>
+    <blockquote
+      className='twitter-tweet'
+      data-dnt='true'
+      data-theme='light'
+    >
+      <a href={tweetUrl} target='_blank' rel='noopener noreferrer'>
+        Loading tweet...
+      </a>
+    </blockquote>
   )
 }
 
