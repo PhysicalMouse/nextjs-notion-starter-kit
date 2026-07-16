@@ -11,10 +11,10 @@ export default siteConfig({
   // basic site info (required)
   name: "PhysicalMouse's Blog",
   domain: 'blog.cfambor.fun',
-  author: 'Physical Mouse',
+  author: 'PhysicalMouse',
 
   // open graph metadata (optional)
-  description: "PhysicalMouse's personal blog covering Blender 3D art, sculpting, creative practice, study notes, and travel stories.",
+  description: "PhysicalMouse's personal blog covering Blender 3D art, sculpting, creative practice, study notes, and travel stories. 物理鼠鼠的个人博客，内容涵盖 Blender 3D 艺术、雕刻、创作实践、学习笔记以及旅行故事。",
 
   // default notion icon and cover images for site-wide consistency (optional)
   // page-specific values will override these site-wide defaults
