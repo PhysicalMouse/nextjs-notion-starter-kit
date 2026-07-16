@@ -10,7 +10,7 @@ export default siteConfig({
 
   // basic site info (required)
   name: "PhysicalMouse's Blog",
-  domain: 'blog.cfambor.fun',
+  domain: 'blog.physmouse.com',
   author: 'PhysicalMouse',
 
   // open graph metadata (optional)
@@ -30,14 +30,14 @@ export default siteConfig({
   bingSiteVerification: '96B332BE8C0729927B4C665A4E31D77A',
   // Google Search Console: https://search.google.com/search-console
   // paste the content value from the "HTML tag" verification method here
-  googleSiteVerification: '9gQof63B6fxt92-FiBLg4N0CZ1g0tRFtlCgf80-A54Q',
+  googleSiteVerification: 'Gmy5eIF7Jk9ut5BCVJLZGF6kr7zcFWa-ZxvPM-wChLA',
   // IndexNow key for instant indexing (Bing/Yandex). https://www.indexnow.org
   // the matching verification file lives at public/<key>.txt
   indexNowKey: 'e2d8315e71f04375d6baaa530494bd7c',
 
   // analytics (optional)
   // Google Analytics 4 measurement id, e.g. 'G-XXXXXXXXXX'
-  googleAnalyticsId: 'G-CXY89KXMRM',
+  googleAnalyticsId: 'G-NX2G97BYGR',
   // Vercel Web Analytics and Speed Insights (enabled by default)
   isVercelAnalyticsEnabled: true,
   isVercelSpeedInsightsEnabled: true,
