@@ -122,6 +122,11 @@ export const bingSiteVerification: string | null =
   getSiteConfig('bingSiteVerification', null) ||
   getEnv('BING_SITE_VERIFICATION', null)
 
+// IndexNow key for instant indexing (Bing/Yandex). The matching verification
+// file must exist at `public/<key>.txt`. https://www.indexnow.org
+export const indexNowKey: string | null =
+  getSiteConfig('indexNowKey', null) || getEnv('INDEXNOW_KEY', null)
+
 // Optional analytics. Configured in site.config.ts, with env var overrides.
 // Google Analytics 4 measurement id (e.g. 'G-XXXXXXXXXX')
 export const googleAnalyticsId: string | null =

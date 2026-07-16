@@ -31,6 +31,9 @@ export default siteConfig({
   // Google Search Console: https://search.google.com/search-console
   // paste the content value from the "HTML tag" verification method here
   googleSiteVerification: '9gQof63B6fxt92-FiBLg4N0CZ1g0tRFtlCgf80-A54Q',
+  // IndexNow key for instant indexing (Bing/Yandex). https://www.indexnow.org
+  // the matching verification file lives at public/<key>.txt
+  indexNowKey: 'e2d8315e71f04375d6baaa530494bd7c',
 
   // analytics (optional)
   // Google Analytics 4 measurement id, e.g. 'G-XXXXXXXXXX'

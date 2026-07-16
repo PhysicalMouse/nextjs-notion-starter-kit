@@ -23,6 +23,9 @@ export interface SiteConfig {
   googleSiteVerification?: string | null
   bingSiteVerification?: string | null
 
+  // SEO: IndexNow key for instant search-engine indexing (Bing/Yandex) (optional)
+  indexNowKey?: string | null
+
   // analytics (optional)
   googleAnalyticsId?: string | null
   isVercelAnalyticsEnabled?: boolean
