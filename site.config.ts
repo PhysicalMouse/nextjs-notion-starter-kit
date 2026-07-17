@@ -44,7 +44,7 @@ export default siteConfig({
 
   // whether or not redis is enabled for caching generated preview images (optional)
   // NOTE: set the REDIS_URL environment variable with your connection string
-  isRedisEnabled: false,
+  isRedisEnabled: true,
 
   // map of notion page IDs to URL paths (optional)
   // any pages defined here will override their default URL paths
