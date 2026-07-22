@@ -16,7 +16,6 @@ export interface SiteConfig {
 
   isPreviewImageSupportEnabled?: boolean
   isTweetEmbedSupportEnabled?: boolean
-  isRedisEnabled?: boolean
   isSearchEnabled?: boolean
 
   // SEO: search-engine site verification codes (optional)

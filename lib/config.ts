@@ -92,13 +92,6 @@ export const isSearchEnabled: boolean = getSiteConfig('isSearchEnabled', true)
 
 // ----------------------------------------------------------------------------
 
-// Optional redis instance for persisting preview images.
-// Toggle via site.config.ts `isRedisEnabled`.
-// The connection URL is a private credential — set it via the REDIS_URL env var.
-export const isRedisEnabled: boolean = getSiteConfig('isRedisEnabled', false)
-export const redisUrl = getEnv('REDIS_URL', isRedisEnabled ? undefined : null)
-export const redisNamespace = getEnv('REDIS_NAMESPACE', 'preview-images')
-
 // ----------------------------------------------------------------------------
 
 export const isServer = typeof window === 'undefined'
