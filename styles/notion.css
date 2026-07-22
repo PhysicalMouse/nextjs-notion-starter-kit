@@ -111,21 +111,31 @@
 }
 
 .notion-collection-card {
-  border-radius: 4px;
+  overflow: hidden;
+  border-radius: 14px;
   box-shadow: none;
 }
 
-.notion-collection-card-cover img {
-  border-radius: 4px 4px 0 0;
-}
-
-.notion-collection-card {
-  overflow: visible;
-}
-
-.notion-collection-card-cover {
-  border-radius: 4px 4px 0 0;
+/* Notion's gallery covers are approximately 338 × 180 (1.878:1).
+   Override react-notion-x's fixed 190px / 124px heights so every card size
+   preserves that same visual proportion. */
+.notion-gallery-grid .notion-collection-card-cover {
+  height: auto;
+  aspect-ratio: 1.878 / 1;
+  border-radius: 14px 14px 0 0;
   box-shadow: none;
+}
+
+.notion-gallery-grid .notion-collection-card-cover img,
+.notion-gallery-grid .notion-collection-card-cover span,
+.notion-gallery-grid .notion-collection-card-cover .notion-property-file {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px 14px 0 0;
+}
+
+.notion-gallery-grid .notion-collection-card-cover img {
+  object-fit: cover;
 }
 
 .notion-collection-card-cover {
