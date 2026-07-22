@@ -77,7 +77,11 @@
 }
 
 .notion-gallery-grid .notion-page-icon-inline {
-  display: none;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  flex: 0 0 20px;
+  align-self: flex-start;
 }
 
 .notion-gallery-grid .notion-page-title-text {
