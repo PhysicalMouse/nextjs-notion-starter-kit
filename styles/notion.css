@@ -64,6 +64,24 @@
   grid-auto-rows: auto;
 }
 
+/* respect the card size chosen in Notion's gallery view (小 / 中 / 大).
+   react-notion-x adds `notion-gallery-grid-size-{small,medium,large}`. */
+.notion-gallery-grid.notion-gallery-grid-size-small {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 3vmin;
+  gap: 3vmin;
+}
+
+.notion-gallery-grid.notion-gallery-grid-size-medium {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 4vmin;
+  gap: 4vmin;
+}
+
+.notion-gallery-grid.notion-gallery-grid-size-large {
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+}
+
 .notion-gallery-grid .notion-page-icon-inline {
   display: none;
 }
@@ -71,6 +89,15 @@
 .notion-gallery-grid .notion-page-title-text {
   font-size: 2em;
   white-space: unset;
+}
+
+/* scale card title down for smaller card sizes so text fits the tighter grid */
+.notion-gallery-grid.notion-gallery-grid-size-small .notion-page-title-text {
+  font-size: 1.15em;
+}
+
+.notion-gallery-grid.notion-gallery-grid-size-medium .notion-page-title-text {
+  font-size: 1.5em;
 }
 
 .notion-gallery-grid .notion-collection-card-property {
