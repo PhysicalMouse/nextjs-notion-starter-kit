@@ -107,6 +107,7 @@
 
 .notion-gallery-grid .notion-property-text {
   font-size: 14px;
+  white-space: pre-line;
 }
 
 .notion-gallery-grid-size-small .notion-property-text,
