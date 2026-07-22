@@ -90,6 +90,10 @@ export const navigationLinks: Array<NavigationLink | undefined> = getSiteConfig(
 // Optional site search
 export const isSearchEnabled: boolean = getSiteConfig('isSearchEnabled', true)
 
+// ISR revalidation interval in seconds. Configured in site.config.ts.
+// Default is 3600 (1 hour). Increase to reduce Vercel function invocations.
+export const revalidateSeconds: number = getSiteConfig('revalidateSeconds', 3600)
+
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------

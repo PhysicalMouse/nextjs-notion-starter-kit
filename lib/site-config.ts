@@ -36,6 +36,10 @@ export interface SiteConfig {
 
   navigationStyle?: types.NavigationStyle
   navigationLinks?: Array<NavigationLink>
+
+  // ISR revalidation interval in seconds (default: 3600).
+  // Lower values = more up-to-date content but more Vercel function invocations.
+  revalidateSeconds?: number
 }
 
 export interface NavigationLink {
