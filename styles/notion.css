@@ -54,32 +54,26 @@
 }
 
 .notion-gallery-grid {
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  grid-gap: 6vmin;
-  gap: 6vmin;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
   /* each row's height is driven only by the tallest card in THAT row,
-     instead of the global tallest card (react-notion-x defaults to 1fr).
-     This lets short rows shrink to their content while same-row cards
-     stay equal height and the next row follows immediately. */
+     instead of the global tallest card (react-notion-x defaults to 1fr). */
   grid-auto-rows: auto;
 }
 
-/* respect the card size chosen in Notion's gallery view (小 / 中 / 大).
-   react-notion-x adds `notion-gallery-grid-size-{small,medium,large}`. */
-.notion-gallery-grid.notion-gallery-grid-size-small {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 3vmin;
-  gap: 3vmin;
-}
+/* Match Notion's gallery density: small uses three columns, while medium
+   and large use two columns on desktop. Mobile remains a single column. */
+@media (min-width: 768px) {
+  .notion-gallery-grid.notion-gallery-grid-size-small {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
 
-.notion-gallery-grid.notion-gallery-grid-size-medium {
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-gap: 4vmin;
-  gap: 4vmin;
-}
-
-.notion-gallery-grid.notion-gallery-grid-size-large {
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  .notion-gallery-grid.notion-gallery-grid-size-medium,
+  .notion-gallery-grid.notion-gallery-grid-size-large {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
 }
 
 .notion-gallery-grid .notion-page-icon-inline {
@@ -87,17 +81,18 @@
 }
 
 .notion-gallery-grid .notion-page-title-text {
-  font-size: 2em;
+  font-size: 1.5em;
+  line-height: 1.4;
   white-space: unset;
 }
 
-/* scale card title down for smaller card sizes so text fits the tighter grid */
 .notion-gallery-grid.notion-gallery-grid-size-small .notion-page-title-text {
-  font-size: 1.15em;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
-.notion-gallery-grid.notion-gallery-grid-size-medium .notion-page-title-text {
-  font-size: 1.5em;
+.notion-gallery-grid.notion-gallery-grid-size-large .notion-page-title-text {
+  font-size: 2em;
 }
 
 .notion-gallery-grid .notion-collection-card-property {
@@ -109,13 +104,19 @@
   font-size: 14px;
 }
 
+.notion-gallery-grid-size-small .notion-property-text,
+.notion-gallery-grid-size-small .notion-collection-card-property {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .notion-collection-card {
-  border-radius: 16px;
+  border-radius: 4px;
   box-shadow: none;
 }
 
 .notion-collection-card-cover img {
-  border-radius: 16px;
+  border-radius: 4px 4px 0 0;
 }
 
 .notion-collection-card {
@@ -123,8 +124,8 @@
 }
 
 .notion-collection-card-cover {
-  border-radius: 16px;
-  box-shadow: 2px 2px 8px 4px rgba(15, 15, 15, 0.1);
+  border-radius: 4px 4px 0 0;
+  box-shadow: none;
 }
 
 .notion-collection-card-cover {
