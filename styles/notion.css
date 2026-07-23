@@ -514,3 +514,158 @@
 .notion-collection-row-property:nth-child(1) .notion-property {
   white-space: pre-line;
 }
+
+/* -----------------------------------------------------------------------
+   Notion-style article outline: collapsed markers, expanded text on hover
+   ----------------------------------------------------------------------- */
+@media (min-width: 1300px) and (min-height: 300px) {
+  .notion-aside {
+    align-items: center;
+  }
+
+  .notion-aside-table-of-contents {
+    width: 40px;
+    min-width: 40px;
+    max-width: 280px;
+    padding: 12px 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    align-items: stretch;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    box-shadow: none;
+    transition:
+      width 180ms ease,
+      padding 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .notion-aside-table-of-contents:hover,
+  .notion-aside-table-of-contents:focus-within {
+    width: 280px;
+    padding: 20px;
+    background: var(--bg-color);
+    border-color: var(--fg-color-0);
+    box-shadow: 0 14px 36px var(--fg-color-0);
+  }
+
+  .notion-aside-table-of-contents-header {
+    display: none;
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents-item {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 6px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    color: var(--fg-color-3);
+    font-size: 14px;
+    line-height: 1.45;
+    text-decoration: none;
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents-item::before {
+    width: 16px;
+    height: 3px;
+    margin: 0 auto;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: var(--fg-color-1);
+    content: '';
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .notion-aside-table-of-contents
+    .notion-table-of-contents-item-indent-level-1::before {
+    width: 12px;
+  }
+
+  .notion-aside-table-of-contents
+    .notion-table-of-contents-item-indent-level-2::before {
+    width: 8px;
+  }
+
+  .notion-aside-table-of-contents
+    .notion-table-of-contents-active-item::before {
+    width: 20px;
+    background: var(--fg-color-4);
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents-item-body {
+    display: none !important;
+    min-width: 0;
+    margin-left: 0 !important;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .notion-aside-table-of-contents:hover .notion-table-of-contents-item,
+  .notion-aside-table-of-contents:focus-within .notion-table-of-contents-item {
+    min-height: 0;
+    align-items: flex-start;
+  }
+
+  .notion-aside-table-of-contents:hover .notion-table-of-contents-item::before,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item::before {
+    display: none;
+  }
+
+  .notion-aside-table-of-contents:hover .notion-table-of-contents-item-body,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item-body {
+    display: block !important;
+    width: 100%;
+  }
+
+  .notion-aside-table-of-contents:hover
+    .notion-table-of-contents-item-indent-level-1,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item-indent-level-1 {
+    padding-left: 16px;
+  }
+
+  .notion-aside-table-of-contents:hover
+    .notion-table-of-contents-item-indent-level-2,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item-indent-level-2 {
+    padding-left: 32px;
+  }
+
+  .notion-aside-table-of-contents:hover
+    .notion-table-of-contents-active-item,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-active-item {
+    color: var(--select-color-0) !important;
+  }
+}
+
+@media (max-width: 1299px), (max-height: 299px) {
+  .notion-aside {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notion-aside-table-of-contents,
+  .notion-aside-table-of-contents .notion-table-of-contents-item::before {
+    transition: none;
+  }
+}
