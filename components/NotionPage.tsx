@@ -121,6 +121,41 @@ const Collection = dynamic(
     ssr: false
   }
 )
+
+const SemanticCollection = (props: any) => {
+  const collectionRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const root = collectionRef.current
+    if (!root) return
+
+    const promoteGalleryTitles = () => {
+      root
+        .querySelectorAll<HTMLElement>(
+          '.notion-gallery-grid .notion-page-title-text:not(h2)'
+        )
+        .forEach((title) => {
+          const heading = document.createElement('h2')
+          heading.className = title.className
+          heading.innerHTML = title.innerHTML
+          title.replaceWith(heading)
+        })
+    }
+
+    promoteGalleryTitles()
+
+    const observer = new MutationObserver(promoteGalleryTitles)
+    observer.observe(root, { childList: true, subtree: true })
+
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={collectionRef} className='semantic-collection'>
+      <Collection {...props} />
+    </div>
+  )
+}
 const Equation = dynamic(() =>
   import('react-notion-x/third-party/equation').then((m) => m.Equation)
 )
@@ -197,7 +232,7 @@ const notionRendererComponents: Partial<NotionComponents> = {
   nextLegacyImage: Image,
   nextLink: Link,
   Code,
-  Collection,
+  Collection: SemanticCollection,
   Equation,
   Pdf,
   Modal,
