@@ -14,7 +14,7 @@ export default siteConfig({
   author: 'PhysicalMouse',
 
   // open graph metadata (optional)
-  description: "PhysicalMouse's personal blog covering Blender 3D art, sculpting, creative practice, study notes, and travel stories. 物理鼠鼠的个人博客，内容涵盖 Blender 3D 艺术、雕刻、创作实践以及学习笔记。",
+  description: "PhysicalMouse's personal blog covering Blender 3D art, sculpting, creative practice and study notes. 物理鼠鼠的个人博客，内容涵盖 Blender 3D 艺术、雕刻、创作实践以及学习笔记。",
 
   // default notion icon and cover images for site-wide consistency (optional)
   // page-specific values will override these site-wide defaults
