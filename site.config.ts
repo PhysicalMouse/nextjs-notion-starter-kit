@@ -38,6 +38,8 @@ export default siteConfig({
   // analytics (optional)
   // Google Analytics 4 measurement id, e.g. 'G-XXXXXXXXXX'
   googleAnalyticsId: 'G-NX2G97BYGR',
+  // Microsoft Clarity project ID. https://clarity.microsoft.com
+  clarityId: 'xsgpgrdvwf',
   // Vercel Web Analytics and Speed Insights (enabled by default)
   isVercelAnalyticsEnabled: true,
   isVercelSpeedInsightsEnabled: true,

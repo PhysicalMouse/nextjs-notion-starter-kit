@@ -29,6 +29,8 @@ export interface SiteConfig {
   googleAnalyticsId?: string | null
   isVercelAnalyticsEnabled?: boolean
   isVercelSpeedInsightsEnabled?: boolean
+  // Microsoft Clarity project ID (optional): https://clarity.microsoft.com
+  clarityId?: string | null
 
   includeNotionIdInUrls?: boolean
   pageUrlOverrides?: types.PageUrlOverridesMap | null

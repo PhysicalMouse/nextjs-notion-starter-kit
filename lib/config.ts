@@ -94,6 +94,9 @@ export const isSearchEnabled: boolean = getSiteConfig('isSearchEnabled', true)
 // Default is 3600 (1 hour). Increase to reduce Vercel function invocations.
 export const revalidateSeconds: number = getSiteConfig('revalidateSeconds', 3600)
 
+// Microsoft Clarity project ID (optional). Configured in site.config.ts.
+export const clarityId: string | null = getSiteConfig('clarityId', null)
+
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
