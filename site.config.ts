@@ -57,7 +57,7 @@ export default siteConfig({
   // ISR revalidation interval in seconds (optional, default: 3600).
   // Pages will be regenerated at most once per interval, reducing Vercel function invocations.
   // Increase for less frequent updates (e.g. 86400 = once per day).
-  revalidateSeconds: 86400,
+  revalidateSeconds: 3600,
 
   // whether to use the default notion navigation style or a custom one with links to
   // important pages. To use `navigationLinks`, set `navigationStyle` to `custom`.
