@@ -10,7 +10,7 @@ import { useDarkMode } from '@/lib/use-dark-mode'
 
 import styles from './styles.module.css'
 
-export function FooterImpl() {
+export function FooterImpl({ comments }: { comments?: React.ReactNode }) {
   const { hasMounted, isDarkMode, toggleDarkMode } = useDarkMode()
   const currentYear = new Date().getFullYear()
 
@@ -24,6 +24,8 @@ export function FooterImpl() {
 
   return (
     <footer className={styles.footer}>
+      {comments}
+
       <div className={styles.copyright}>
         Copyright {currentYear} {config.author}
       </div>

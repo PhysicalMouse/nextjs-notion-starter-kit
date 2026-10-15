@@ -27,6 +27,7 @@ import { Footer } from './Footer'
 import { GitHubShareButton } from './GitHubShareButton'
 import { NotionPageHeader } from './NotionPageHeader'
 import { PageAside } from './PageAside'
+import Utterances from './Utterances'
 
 // -----------------------------------------------------------------------------
 // dynamic imports for optional components
@@ -269,7 +270,17 @@ export function NotionPage({
         mapImageUrl={mapImageUrl}
         searchNotion={config.isSearchEnabled ? searchNotion : undefined}
         pageAside={pageAside}
-        footer={<Footer />}
+        footer={
+          <Footer
+            comments={
+              isBlogPost ? (
+                <Utterances
+                  theme={isDarkMode ? 'github-dark' : 'github-light'}
+                />
+              ) : undefined
+            }
+          />
+        }
       />
 
       <GitHubShareButton />

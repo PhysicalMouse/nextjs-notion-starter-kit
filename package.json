@@ -30,6 +30,8 @@
   "dependencies": {
     "@keyvhq/core": "^2.2.7",
     "@keyvhq/redis": "^2.2.7",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "classnames": "^2.5.1",
     "expiry-map": "^2.0.0",
     "fathom-client": "^3.7.2",
@@ -52,6 +54,7 @@
     "react-tweet": "^3.3.1",
     "react-use": "^17.6.1",
     "rss": "^1.2.2",
+    "server-only": "^1.0.1",
     "sharp": "^0.35.4"
   },
   "devDependencies": {

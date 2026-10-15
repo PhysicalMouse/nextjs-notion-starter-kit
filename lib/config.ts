@@ -132,6 +132,39 @@ export const redisNamespace = getEnv('REDIS_NAMESPACE', 'preview-images')
 
 // ----------------------------------------------------------------------------
 
+// Optional search-engine site verification codes.
+export const googleSiteVerification: string | null =
+  getSiteConfig('googleSiteVerification', null) ||
+  getEnv('GOOGLE_SITE_VERIFICATION', null)
+export const bingSiteVerification: string | null =
+  getSiteConfig('bingSiteVerification', null) ||
+  getEnv('BING_SITE_VERIFICATION', null)
+
+// IndexNow key for instant indexing (Bing/Yandex).
+export const indexNowKey: string | null =
+  getSiteConfig('indexNowKey', null) || getEnv('INDEXNOW_KEY', null)
+
+// Optional analytics.
+export const googleAnalyticsId: string | null =
+  getSiteConfig('googleAnalyticsId', null) ||
+  getEnv('NEXT_PUBLIC_GOOGLE_ANALYTICS_ID', null)
+export const isVercelAnalyticsEnabled: boolean = getSiteConfig(
+  'isVercelAnalyticsEnabled',
+  true
+)
+export const isVercelSpeedInsightsEnabled: boolean = getSiteConfig(
+  'isVercelSpeedInsightsEnabled',
+  true
+)
+
+// Microsoft Clarity project ID (optional).
+export const clarityId: string | null = getSiteConfig('clarityId', null)
+
+// ISR revalidation interval in seconds.
+export const revalidateSeconds: number = getSiteConfig('revalidateSeconds', 3600)
+
+// ----------------------------------------------------------------------------
+
 export const isServer = typeof window === 'undefined'
 
 export const port = getEnv('PORT', '3000')
@@ -144,6 +177,7 @@ export const apiBaseUrl = `/api`
 
 export const api = {
   searchNotion: `${apiBaseUrl}/search-notion`,
+  searchIndex: `${apiBaseUrl}/search-index`,
   getNotionPageInfo: `${apiBaseUrl}/notion-page-info`,
   getSocialImage: `${apiBaseUrl}/social-image`
 }

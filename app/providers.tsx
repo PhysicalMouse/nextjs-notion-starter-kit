@@ -7,7 +7,16 @@ import type PostHog from 'posthog-js-lite'
 import * as React from 'react'
 
 import { bootstrap } from '@/lib/bootstrap-client'
-import { fathomConfig, fathomId, posthogConfig, posthogId } from '@/lib/config'
+import {
+  clarityId,
+  fathomConfig,
+  fathomId,
+  googleAnalyticsId,
+  isVercelAnalyticsEnabled,
+  isVercelSpeedInsightsEnabled,
+  posthogConfig,
+  posthogId
+} from '@/lib/config'
 
 const themeClassNames = { dark: 'dark-mode', light: 'light-mode' }
 
@@ -115,5 +124,64 @@ function Analytics() {
     posthogRef.current?.capture('$pageview')
   }, [url])
 
-  return null
+  return (
+    <>
+      {isVercelAnalyticsEnabled && <DynamicVercelAnalytics />}
+      {isVercelSpeedInsightsEnabled && <DynamicVercelSpeedInsights />}
+      {clarityId && (
+        <script
+          id='microsoft-clarity'
+          dangerouslySetInnerHTML={{
+            __html: `(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","${clarityId}");`
+          }}
+        />
+      )}
+      {googleAnalyticsId && (
+        <>
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${googleAnalyticsId}');
+`
+            }}
+          />
+        </>
+      )}
+    </>
+  )
+}
+
+function DynamicVercelAnalytics() {
+  const [Comp, setComp] = React.useState<React.ComponentType | null>(null)
+
+  React.useEffect(() => {
+    import('@vercel/analytics/react').then((mod) => {
+      setComp(() => mod.Analytics)
+    })
+  }, [])
+
+  return Comp ? <Comp /> : null
+}
+
+function DynamicVercelSpeedInsights() {
+  const [Comp, setComp] = React.useState<React.ComponentType | null>(null)
+
+  React.useEffect(() => {
+    import('@vercel/speed-insights/react').then((mod) => {
+      setComp(() => mod.SpeedInsights)
+    })
+  }, [])
+
+  return Comp ? <Comp /> : null
 }

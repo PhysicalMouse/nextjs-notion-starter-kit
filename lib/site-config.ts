@@ -27,12 +27,28 @@ export interface SiteConfig {
   isRedisEnabled?: boolean
   isSearchEnabled?: boolean
 
+  // SEO: search-engine site verification codes (optional)
+  googleSiteVerification?: string | null
+  bingSiteVerification?: string | null
+  // IndexNow key for instant search-engine indexing (Bing/Yandex)
+  indexNowKey?: string | null
+
+  // analytics (optional)
+  googleAnalyticsId?: string | null
+  isVercelAnalyticsEnabled?: boolean
+  isVercelSpeedInsightsEnabled?: boolean
+  // Microsoft Clarity project ID (optional)
+  clarityId?: string | null
+
   includeNotionIdInUrls?: boolean
   pageUrlOverrides?: types.PageUrlOverridesMap | null
   pageUrlAdditions?: types.PageUrlOverridesMap | null
 
   navigationStyle?: types.NavigationStyle
   navigationLinks?: Array<NavigationLink>
+
+  // ISR revalidation interval in seconds (default: 3600)
+  revalidateSeconds?: number
 }
 
 export interface NavigationLink {

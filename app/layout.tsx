@@ -60,7 +60,13 @@ export const metadata: Metadata = {
     description: config.description
   },
   other: {
-    'mobile-web-app-capable': 'yes'
+    'mobile-web-app-capable': 'yes',
+    ...(config.bingSiteVerification
+      ? { 'msvalidate.01': config.bingSiteVerification }
+      : {}),
+    ...(config.googleSiteVerification
+      ? { 'google-site-verification': config.googleSiteVerification }
+      : {})
   }
 }
 

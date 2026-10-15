@@ -1,4 +1,4 @@
-/**
+﻿/**
  * This file contains site-specifc style overrides for Notion elements from
  * react-notion-x.
  *
@@ -54,18 +54,50 @@
 }
 
 .notion-gallery-grid {
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  grid-gap: 6vmin;
-  gap: 6vmin;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  /* each row's height is driven only by the tallest card in THAT row,
+     instead of the global tallest card (react-notion-x defaults to 1fr). */
+  grid-auto-rows: auto;
+}
+
+/* Match Notion's gallery density: small uses three columns, while medium
+   and large use two columns on desktop. Mobile remains a single column. */
+@media (min-width: 768px) {
+  .notion-gallery-grid.notion-gallery-grid-size-small {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .notion-gallery-grid.notion-gallery-grid-size-medium,
+  .notion-gallery-grid.notion-gallery-grid-size-large {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
 }
 
 .notion-gallery-grid .notion-page-icon-inline {
-  display: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  margin-right: 8px;
+  flex: 0 0 20px;
+  align-self: flex-start;
 }
 
 .notion-gallery-grid .notion-page-title-text {
-  font-size: 2em;
+  font-size: 1.5em;
+  line-height: 1.4;
   white-space: unset;
+}
+
+.notion-gallery-grid.notion-gallery-grid-size-small .notion-page-title-text {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.notion-gallery-grid.notion-gallery-grid-size-large .notion-page-title-text {
+  font-size: 2em;
 }
 
 .notion-gallery-grid .notion-collection-card-property {
@@ -75,34 +107,45 @@
 
 .notion-gallery-grid .notion-property-text {
   font-size: 14px;
+  white-space: pre-line;
+}
+
+.notion-gallery-grid-size-small .notion-property-text,
+.notion-gallery-grid-size-small .notion-collection-card-property {
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .notion-collection-card {
-  border-radius: 16px;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 15, 15, 0.08) 0px 2px 6px;
+}
+
+/* Notion's gallery covers are approximately 338 脳 180 (1.878:1).
+   Override react-notion-x's fixed 190px / 124px heights so every card size
+   preserves that same visual proportion. */
+.notion-gallery-grid .notion-collection-card-cover {
+  height: auto;
+  aspect-ratio: 1.878 / 1;
+  border-radius: 14px 14px 0 0;
   box-shadow: none;
 }
 
-.notion-collection-card-cover img {
-  border-radius: 16px;
+.notion-gallery-grid .notion-collection-card-cover img,
+.notion-gallery-grid .notion-collection-card-cover span,
+.notion-gallery-grid .notion-collection-card-cover .notion-property-file {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px 14px 0 0;
 }
 
-.notion-collection-card {
-  overflow: visible;
-}
-
-.notion-collection-card-cover {
-  border-radius: 16px;
-  box-shadow: 2px 2px 8px 4px rgba(15, 15, 15, 0.1);
+.notion-gallery-grid .notion-collection-card-cover img {
+  object-fit: cover;
 }
 
 .notion-collection-card-cover {
   border-bottom: 0 none;
-  transition: filter 150ms linear;
-  filter: none;
-}
-
-.notion-collection-card:hover .notion-collection-card-cover {
-  filter: brightness(120%);
 }
 
 .notion-collection-card-body {
@@ -162,13 +205,20 @@
 }
 
 .notion .notion-page-icon-cover {
-  margin-left: auto;
+  margin-left: 0;
   margin-right: auto;
+}
+
+/* left-align the hero avatar with the page content instead of centering it */
+.notion-page-icon-hero {
+  left: 16px !important;
+  margin-left: 0 !important;
+  transform: none !important;
 }
 
 .notion-title {
   display: block;
-  text-align: center;
+  text-align: left;
 }
 
 .notion-collection-row {
@@ -400,6 +450,222 @@
   color: var(--fg-color-2);
 }
 
-.notion-equation.notion-equation-block {
+.notion-equation.notion-equation-block{
   align-items: center;
+}
+
+/* -----------------------------------------------------------------------
+   Blog post metadata: left-align and reorder to Description 鈫?Tags 鈫?Author 鈫?Date
+   ----------------------------------------------------------------------- */
+
+/* left-align the whole metadata block */
+.notion-collection-page-properties {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.notion-collection-row {
+  border-top: none !important;
+  justify-content: flex-start;
+}
+
+.notion-collection-row-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25em;
+}
+
+.notion-collection-row-property {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5em;
+}
+
+/* hide the property label column (Tags / Published / Author) */
+.notion-collection-row-property .notion-collection-column-title {
+  display: none;
+}
+
+/* Notion schema order is Description(1) 鈫?Tags(2) 鈫?Author(3) 鈫?Published(4).
+   Reorder to Description 鈫?Tags 鈫?Author 鈫?Date. Using nth-child keeps the
+   native property rendering so the description shares the exact same font as
+   the author/date text below it. */
+.notion-collection-row-property:nth-child(1) {
+  order: 0;
+} /* Description */
+.notion-collection-row-property:nth-child(2) {
+  order: 1;
+} /* Tags */
+.notion-collection-row-property:nth-child(3) {
+  order: 2;
+} /* Author */
+.notion-collection-row-property:nth-child(4) {
+  order: 3;
+} /* Published (date) */
+
+/* Description property: keep line breaks, default text color */
+.notion-collection-row-property:nth-child(1) {
+  margin-bottom: 0.5em;
+}
+.notion-collection-row-property:nth-child(1) .notion-property {
+  white-space: pre-line;
+}
+
+/* -----------------------------------------------------------------------
+   Notion-style article outline: collapsed markers, expanded text on hover
+   ----------------------------------------------------------------------- */
+@media (min-width: 1300px) and (min-height: 300px) {
+  .notion-aside {
+    align-items: center;
+  }
+
+  .notion-aside-table-of-contents {
+    width: 40px;
+    min-width: 40px;
+    max-width: 280px;
+    padding: 12px 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    align-items: stretch;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    box-shadow: none;
+    transition:
+      width 180ms ease,
+      padding 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .notion-aside-table-of-contents:hover,
+  .notion-aside-table-of-contents:focus-within {
+    width: 280px;
+    padding: 20px;
+    background: var(--bg-color);
+    border-color: var(--fg-color-0);
+    box-shadow: 0 14px 36px var(--fg-color-0);
+  }
+
+  .notion-aside-table-of-contents-header {
+    display: none;
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents-item {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 6px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    color: var(--fg-color-3);
+    font-size: 14px;
+    line-height: 1.45;
+    text-decoration: none;
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents-item::before {
+    width: 16px;
+    height: 3px;
+    margin: 0 auto;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: var(--fg-color-1);
+    content: '';
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .notion-aside-table-of-contents
+    .notion-table-of-contents-item-indent-level-1::before {
+    width: 12px;
+  }
+
+  .notion-aside-table-of-contents
+    .notion-table-of-contents-item-indent-level-2::before {
+    width: 8px;
+  }
+
+  .notion-aside-table-of-contents
+    .notion-table-of-contents-active-item::before {
+    width: 20px;
+    background: var(--fg-color-4);
+  }
+
+  .notion-aside-table-of-contents .notion-table-of-contents-item-body {
+    display: none !important;
+    min-width: 0;
+    margin-left: 0 !important;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .notion-aside-table-of-contents:hover .notion-table-of-contents-item,
+  .notion-aside-table-of-contents:focus-within .notion-table-of-contents-item {
+    min-height: 0;
+    align-items: flex-start;
+  }
+
+  .notion-aside-table-of-contents:hover .notion-table-of-contents-item::before,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item::before {
+    display: none;
+  }
+
+  .notion-aside-table-of-contents:hover .notion-table-of-contents-item-body,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item-body {
+    display: block !important;
+    width: 100%;
+  }
+
+  .notion-aside-table-of-contents:hover
+    .notion-table-of-contents-item-indent-level-1,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item-indent-level-1 {
+    padding-left: 16px;
+  }
+
+  .notion-aside-table-of-contents:hover
+    .notion-table-of-contents-item-indent-level-2,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-item-indent-level-2 {
+    padding-left: 32px;
+  }
+
+  .notion-aside-table-of-contents:hover
+    .notion-table-of-contents-active-item,
+  .notion-aside-table-of-contents:focus-within
+    .notion-table-of-contents-active-item {
+    color: var(--select-color-0) !important;
+  }
+}
+
+@media (max-width: 1299px), (max-height: 299px) {
+  .notion-aside {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notion-aside-table-of-contents,
+  .notion-aside-table-of-contents .notion-table-of-contents-item::before {
+    transition: none;
+  }
 }
