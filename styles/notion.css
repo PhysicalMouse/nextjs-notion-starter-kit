@@ -38,6 +38,23 @@
   margin-bottom: 1em;
 }
 
+/* react-notion-x pins image blocks to the stored block_height even when the
+   block is rendered at page width (block_page_width). block_height describes
+   the original thumbnail size, so the combination of that fixed height and
+   object-fit: cover crops the top and bottom of every page-width image.
+   The fixed height lives on the unclassed inner div that Asset renders inside
+   figure.notion-asset-wrapper-image, so target it structurally and let the
+   image keep its intrinsic aspect ratio, as Notion does. */
+.notion-asset-wrapper-image,
+.notion-asset-wrapper-image > div {
+  height: auto !important;
+}
+
+.notion-asset-wrapper-image > div > img {
+  height: auto !important;
+  max-height: none;
+}
+
 .notion-asset-wrapper-video > div,
 .notion-asset-wrapper-video video {
   width: 100% !important;
