@@ -1,0 +1,78 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: main
+nodes_managed: true
+exported_at: "2026-10-20T15:26:55Z"
+modules:
+    "":
+        dir_name: Next.js + Notion 博客站点根工程
+        title: Next.js + Notion 博客站点根工程
+        scope:
+            - contributing.md
+            - package.json
+            - pnpm-workspace.yaml
+            - pnpm-lock.yaml
+            - next.config.js
+            - vercel.json
+            - tsconfig.json
+            - next-env.d.ts
+            - .eslintrc.json
+            - eslint.config.js
+            - .editorconfig
+            - .gitignore
+            - .prettierignore
+            - .env.example
+            - license
+            - readme.md
+            - site.config.ts
+        source_files: []
+        children:
+            - notion_lib
+            - pages_and_routes
+            - styles
+            - ui_components
+        depends_on: []
+        related_to: []
+    notion_lib:
+        dir_name: Notion 站点数据层与运行时配置
+        title: Notion 站点数据层与运行时配置
+        scope:
+            - lib/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: pages_and_routes
+            - path: ui_components
+    pages_and_routes:
+        dir_name: Next.js 页面与 API 路由
+        title: Next.js 页面与 API 路由
+        scope:
+            - pages/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: notion_lib
+            - path: ui_components
+    styles:
+        dir_name: 站点全局样式与 Notion 主题覆盖
+        title: 站点全局样式与 Notion 主题覆盖
+        scope:
+            - styles/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    ui_components:
+        dir_name: Notion 博客页面 UI 组件集
+        title: Notion 博客页面 UI 组件集
+        scope:
+            - components/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: notion_lib
+            - path: pages_and_routes
