@@ -55,9 +55,26 @@
   max-height: none;
 }
 
-.notion-asset-wrapper-video > div,
+/* Notion stores a scaled media block's block_width as the OUTER box width,
+   which already includes 8px of padding on every side (measured on the live
+   Notion page: video block_width 336 -> 320px player, image block_width 480
+   -> 464px image). react-notion-x writes block_width straight onto the
+   unclassed inner <div> as an inline width, so we must NOT clobber it with
+   width:100% -- doing so made user-scaled videos balloon to the full column
+   instead of honoring the size set in Notion. Instead: keep the inline width,
+   guard against overflow on narrow screens with max-width:100%, and reproduce
+   Notion's 8px inner padding (border-box keeps the outer box at block_width)
+   so the media itself lands on the exact pixel size Notion renders. */
+.notion-asset-wrapper-image > div,
+.notion-asset-wrapper-video > div {
+  max-width: 100%;
+  padding: 8px;
+}
+
 .notion-asset-wrapper-video video {
-  width: 100% !important;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .notion-header .notion-nav-header {
