@@ -18,7 +18,13 @@
 
 .notion-page {
   padding-bottom: calc(max(5vh, 32px)) !important;
-  line-height: 1.65;
+  line-height: 1.5;
+}
+
+/* Notion's current light-mode body text is a neutral near-black, slightly
+   darker and less warm than react-notion-x's legacy rgb(55, 53, 47). */
+.notion.light-mode {
+  --fg-color: rgb(44, 44, 43);
 }
 
 .index-page {
@@ -26,7 +32,7 @@
 }
 
 .notion-text {
-  padding: 0.5em 2px;
+  padding: 3px 2px;
 }
 
 .notion-asset-caption {
@@ -196,12 +202,15 @@
   }
 }
 
+/* Notion quotes are body-size, upright text with a thin currentcolor bar on
+   the left — not the enlarged, italic, blue-bordered style used before. */
 .notion-quote {
-  padding: 0.2em 0.75em;
+  padding: 0.2em 0.9em;
+  margin: 6px 0;
   line-height: 1.5;
-  font-style: italic;
-  font-size: 1.2em;
-  border-left: 4px solid #67bdfc;
+  font-style: normal;
+  font-size: 1em;
+  border-left: 3px solid currentcolor;
 }
 
 .notion-h1,
@@ -215,7 +224,7 @@
 }
 
 .notion-hr {
-  margin: 2em 0;
+  margin: 6px 0;
 }
 
 @media only screen and (max-width: 920px) {
@@ -299,36 +308,13 @@
   padding: 2em;
 }
 
-.notion-code {
-  background: rgba(249, 250, 251, 1);
-  border: 1px solid rgba(229, 231, 235, 1);
-  border-radius: 0.375rem;
-}
+/* Code-block box styling (background / border / radius / padding) lives in
+   prism-theme.css, which loads after this file and wins the cascade. */
 
-.notion-link {
-  position: relative;
-  transition: unset;
-  opacity: 1;
-  border-bottom-width: 0.1rem;
-  background: transparent;
-  background-origin: border-box;
-  background-repeat: no-repeat;
-  background-position: 50% 100%;
-  background-size: 0 0.1rem;
-}
-
-.notion-link:focus,
-.notion-link:hover {
-  border-bottom-color: transparent;
-
-  background-image: linear-gradient(90.68deg, #b439df 0.26%, #e5337e 102.37%);
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 100% 0.1rem;
-
-  transition-property: background-position, background-size;
-  transition-duration: 300ms;
-}
+/* Inline links: defer to react-notion-x defaults (inherited color, subtle
+   0.05em underline, muted opacity, darker on hover) which match Notion. The
+   previous gradient hover underline was site flare that diverged from the
+   original page. */
 
 .notion-red_background,
 .notion-pink_background,
@@ -486,6 +472,131 @@
 
 .notion-equation.notion-equation-block{
   align-items: center;
+}
+
+/* -----------------------------------------------------------------------
+   Match original Notion rendering (per side-by-side comparison with the
+   live notion.site page). react-notion-x's defaults diverge here.
+   ----------------------------------------------------------------------- */
+
+/* Notion places the bookmark preview image BEFORE the text (left on wide
+   rows, stacked on top in narrow columns) at a fixed 154px height, and always
+   shows it. react-notion-x puts the image after the text and hides it in
+   columns. Geometry below mirrors the live notion.site inline styles. */
+.notion-bookmark {
+  flex-wrap: wrap;
+  align-items: stretch;
+  border-radius: 10px;
+}
+
+.notion-bookmark-image {
+  order: -1;
+  flex: 1 1 100px;
+  height: 154px;
+  overflow: hidden;
+}
+
+/* round only the leading (left) corners of the preview, as Notion does */
+.notion-bookmark-image img {
+  border-radius: 9px 0 0 9px;
+}
+
+/* text side: column layout with the url pinned to the bottom */
+.notion-bookmark > div:first-child {
+  flex: 4 1 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 24px 14px;
+}
+
+.notion-bookmark-title {
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 500;
+  min-height: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notion-bookmark-description {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  height: auto;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.notion-bookmark-link {
+  margin-top: 0;
+}
+
+.notion-bookmark-link-text {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--fg-color-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* inside a narrow column the bookmark stacks: image full-width on top */
+.notion-column .notion-bookmark {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
+}
+
+.notion-column .notion-bookmark-image {
+  display: block;
+  flex: none;
+  width: 100%;
+  height: 154px;
+}
+
+.notion-column .notion-bookmark-image img {
+  border-radius: 9px 9px 0 0;
+}
+
+/* inline link-mention tokens: Notion underlines the title (weight 500) and
+   renders the provider name in a secondary color. */
+.notion-link-mention-provider {
+  color: var(--fg-color-3);
+}
+
+.notion-link-mention-title {
+  color: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 0.05em;
+  text-underline-offset: 10%;
+}
+
+/* react-notion-x 7.10 puts `notion-to-do-checked` on the text body (a CHILD of
+   .notion-to-do-item), but its own CSS targets `.notion-to-do-checked
+   .notion-to-do-item` (an ANCESTOR), so the checked style never applies.
+   Notion strikes through and dims the checked label. */
+.notion-to-do-body.notion-to-do-checked {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* react-notion-x's --fg-color-5 (alpha .024) renders table gridlines almost
+   invisible; Notion draws a clearly visible light-gray grid. */
+.notion-simple-table,
+.notion-simple-table td {
+  border-color: rgba(55, 53, 47, 0.13);
+}
+
+.dark-mode .notion-simple-table,
+.dark-mode .notion-simple-table td {
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 /* -----------------------------------------------------------------------

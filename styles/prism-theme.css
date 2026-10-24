@@ -1,15 +1,20 @@
 /* prism theme adjustments */
 
-.notion-code {
-  background-color: rgba(249, 250, 251, 1);
-  border: 1px solid rgba(229, 231, 235, 1);
-  border-radius: 0.375rem;
-  padding: 1.5em !important;
+/* Notion code blocks are a warm light-gray fill with rounded corners and no
+   outline (matches the live notion.site page). `pre.notion-code` outranks
+   prism-coy's `pre[class*="language-"]` (equal specificity, later order) so
+   the theme's #fdfdfd fill, stripe gradient and ring shadow are neutralised. */
+pre.notion-code {
+  background-color: var(--bg-color-1);
+  background-image: none;
+  box-shadow: none;
+  border: none;
+  border-radius: 10px;
+  padding: 24px 22px !important;
 }
 
-.dark-mode .notion-code {
-  background-color: rgba(17, 24, 39, 1);
-  border-color: rgba(55, 65, 81, 1);
+.dark-mode pre.notion-code {
+  background-color: var(--bg-color-1);
 }
 .notion code {
   color: rgba(31, 41, 55, 1);
