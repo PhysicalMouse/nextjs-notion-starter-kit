@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: components
+title: Notion 站点页面与交互组件
+scope:
+    - components/
+source_files: []
+depends_on: []
+related_to:
+    - path: lib
+    - path: pages_and_routes
+    - path: styles

@@ -9,84 +9,71 @@ source_files:
     - next.config.js
     - vercel.json
     - .github/workflows/build.yml
+    - oxlint.config.ts
+    - oxfmt.config.ts
     - pnpm-workspace.yaml
-    - pnpm-lock.yaml
-    - eslint.config.js
-    - .eslintrc.json
-    - .editorconfig
 ---
 
 ## 1. 构建系统概览
 
-本项目是一个基于 Next.js Pages Router 的静态站点，构建与发布完全围绕以下工具链：
+本项目是一个基于 Next.js Pages Router 的单仓博客模板，构建与发布完全围绕以下工具链展开：
 
-- **包管理器**: pnpm（`package.json` 中声明 `"packageManager": "pnpm@10.29.3"`，配合根目录 `pnpm-workspace.yaml` 与 `pnpm-lock.yaml`）。
-- **运行时要求**: Node.js 24（`engines.node = "24"`），但 CI 矩阵同时覆盖 20/22/24 以验证兼容性。
-- **框架构建**: Next.js 原生 `next build` / `next dev` / `next start`。
-- **部署平台**: Vercel（通过 `vercel deploy` 脚本与 `vercel.json` 配置）。
-- **CI**: GitHub Actions（`.github/workflows/build.yml`），在 push 时触发 lint + prettier 测试。
-- **本地钩子**: simple-git-hooks + lint-staged，pre-commit 阶段运行 Prettier 与 ESLint。
-
-仓库没有 Makefile、Dockerfile 或自定义 build.sh；所有构建逻辑集中在 `package.json` scripts 与 Next.js/Vercel 配置中。
+- **包管理器**：pnpm（`packageManager: "pnpm@10.29.3"`），通过 `pnpm-workspace.yaml` 启用工作区模式。
+- **运行时/构建器**：Next.js 16 (`next build` / `next dev` / `next start`)，ESM 模块 (`"type": "module"`)。
+- **部署平台**：Vercel（`vercel.json` 声明定时任务，`pnpm deploy` 触发 `vercel deploy`）。
+- **CI**：GitHub Actions（`.github/workflows/build.yml`），在 push 时运行测试矩阵。
+- **代码质量**：oxlint + oxfmt（来自 `@fisch0920/config` 共享配置），TypeScript 类型检查。
+- **Git Hooks**：simple-git-hooks + lint-staged，pre-commit 阶段执行 `oxfmt` 与 `oxlint --fix`。
 
 ## 2. 关键文件
 
 | 文件 | 作用 |
 |---|---|
-| `package.json` | 定义 `dev`/`build`/`start`/`deploy`/`test` 等脚本、依赖版本、`pnpm.onlyBuiltDependencies`、lint-staged 钩子 |
-| `next.config.js` | Next.js 构建期配置：静态页面超时、图片远程域名白名单、AVIF/WebP 输出格式、`react-tweet` transpile |
-| `vercel.json` | Vercel cron 调度 `/api/indexnow`（每天 03:00 UTC） |
-| `.github/workflows/build.yml` | CI 流水线：checkout → pnpm/action-setup → setup-node → `pnpm install --frozen-lockfile --strict-peer-dependencies` → `pnpm test` |
-| `pnpm-workspace.yaml` | pnpm monorepo 工作区声明（尽管当前只有一个 workspace root） |
-| `pnpm-lock.yaml` | 锁定依赖树，CI 使用 `--frozen-lockfile` 强制一致性 |
-| `eslint.config.js` / `.eslintrc.json` | ESLint 配置（ESLint 9 flat config 与 legacy 并存） |
-| `.editorconfig` | 编辑器级缩进/换行约定 |
+| `package.json` | 脚本入口、依赖声明、`engines.node = 24`、`packageManager` 锁定版本、`pnpm.onlyBuiltDependencies` 白名单 |
+| `next.config.js` | Next.js 构建期配置：远程图片白名单、AVIF/WebP 输出格式、CSP、`transpilePackages: ['react-tweet']` |
+| `vercel.json` | Vercel 部署配置，仅声明 Cron 调度 `/api/indexnow`（每天 03:00 UTC） |
+| `.github/workflows/build.yml` | GitHub Actions CI，push 触发，Node 20/22/24 三版本矩阵 |
+| `oxlint.config.ts` | 继承 `@fisch0920/config/oxlint`，关闭 `react/immutability` 与 `react/set-state-in-effect` |
+| `oxfmt.config.ts` | 继承 `@fisch0920/config/oxfmt`，忽略 `.qoder/.next/.vercel/.cache/.snapshots/build/dist/node_modules/public` 等生成目录 |
+| `pnpm-workspace.yaml` | 启用 pnpm workspace（仓库级多包结构基础） |
+| `tsconfig.json` | TypeScript 编译选项（由 Next.js 驱动） |
 
-## 3. 架构与约定
+## 3. 构建与测试流程
 
-### 3.1 脚本约定
+### 本地开发
 - `pnpm dev` → `next dev`
-- `pnpm build` → `next build`（生成静态站点）
-- `pnpm start` → `next start`（生产预览）
-- `pnpm deploy` → `vercel deploy`（一键推送到 Vercel）
-- `pnpm test` → `run-p test:*` 并行执行 `test:lint` 与 `test:prettier`
-- `pnpm deps:upgrade` → 非 CI 环境下升级 `notion-client`/`notion-types`/`notion-utils`/`react-notion-x`（通过 `[ -z $GITHUB_ACTIONS ]` 判断）
-- `pnpm deps:link[:pkg]` / `deps:unlink` → 将本地 `../react-notion-x/packages/*` 软链到依赖，用于开发 react-notion-x 上游时的联调
+- `pnpm build` → `next build`（静态页面生成超时设为 300s）
+- `pnpm start` → `next start`
 
-### 3.2 依赖管理策略
-- 使用 pnpm 的 `onlyBuiltDependencies` 仅允许 `canvas`/`core-js`/`protobufjs` 执行 native build，减少构建体积。
-- 通过 `overrides.cacheable-request.keyv` 强制将间接依赖 `keyv` 升级到 `@keyvhq/core@~1.6.6`，解决第三方库版本冲突。
-- 开发依赖 `@fisch0920/config` 提供共享的 Prettier 与 ESLint 预设。
+### 测试命令
+`pnpm test` 并行执行三个子任务（`run-p test:*`）：
+- `test:lint` → `oxlint`
+- `test:format` → `oxfmt --check`
+- `test:typecheck` → `tsc`
 
-### 3.3 Next.js 构建行为
-- `staticPageGenerationTimeout: 300`：静态页面生成超时设为 300s，适配 Notion API 慢查询场景。
-- `images.remotePatterns` 白名单限定 `notion.so`、`unsplash.com`、`twitter.com`、`s3.us-west-2.amazonaws.com` 等外部图片源。
-- 输出 AVIF 与 WebP 两种现代图片格式，并开启 SVG 支持（`dangerouslyAllowSVG: true`）。
-- `transpilePackages: ['react-tweet']`：对第三方 ESM-only 包进行转译。
+### CI（GitHub Actions）
+- 触发条件：`on: [push]`
+- 环境矩阵：Ubuntu + Node 20 / 22 / 24
+- 步骤：checkout → pnpm/action-setup → setup-node (带 pnpm 缓存) → `pnpm install --frozen-lockfile --strict-peer-dependencies` → `pnpm test`
+- 未包含构建或部署步骤；注释中预留了 Redis 缓存与 `pnpm build` 的占位。
 
-### 3.4 部署与定时任务
-- `vercel.json` 中定义 cron：`/api/indexnow` 每日 03:00 UTC 自动调用，用于向搜索引擎提交站点索引。
-- 无 Docker 镜像构建步骤；Vercel 平台直接拉取源码并执行 `pnpm build`。
+### 依赖管理策略
+- 使用 `pnpm up -L` 升级依赖（`deps:upgrade`），但在 CI 中跳过（检测 `$GITHUB_ACTIONS`）。
+- 支持将本地源码链接到 `react-notion-x` 的 monorepo 子包（`notion-types` / `notion-utils` / `notion-client` / `react-notion-x`），通过 `deps:link:*` 系列脚本配合 `pnpm link` 实现。
+- `overrides.cacheable-request.keyv` 强制降级 keyv 版本以兼容旧依赖树。
+- `pnpm.onlyBuiltDependencies` 白名单限制原生构建范围（canvas、core-js、protobufjs），加速安装。
 
-### 3.5 CI 流水线（GitHub Actions）
-- 触发条件：`on: [push]`。
-- 矩阵策略：Node.js 20、22、24 三版本并行，`fail-fast: true`。
-- 安装命令：`pnpm install --frozen-lockfile --strict-peer-dependencies`，严格校验 peer dependency 且锁文件必须匹配。
-- 测试命令：`pnpm test`（即 `run-p test:lint test:prettier`）。
-- 注释掉的 Redis 缓存环境变量块表明项目预留了 Redis 缓存扩展点，但未启用。
+## 4. 部署与产物
 
-### 3.6 本地提交钩子
-- `simple-git-hooks.pre-commit` → `npx lint-staged`
-- `lint-staged` 对 `*.{ts,tsx}` 文件依次执行 `prettier --write` 与 `eslint --fix`。
+- **部署方式**：`pnpm deploy` 调用 `vercel deploy`，无自定义构建命令，Vercel 自动识别 Next.js 项目。
+- **Vercel Cron**：`vercel.json` 中定义 `crons[0].path = "/api/indexnow"`，调度频率 `0 3 * * *`（UTC 每日 3 点），用于向 IndexNow 推送站点更新。
+- **构建产物**：Next.js 默认输出 `.next/` 目录，被 `oxfmt.config.ts` 的 ignorePatterns 排除。
 
-## 4. 约定与约束
+## 5. 约定与约束
 
-- **Node 版本**：`package.json` 的 `engines.node = "24"` 是运行时要求；CI 额外验证 20/22 兼容性。
-- **依赖锁定**：CI 使用 `--frozen-lockfile`，任何未同步的 `pnpm-lock.yaml` 变更都会导致 CI 失败。
-- **Peer 依赖严格模式**：`--strict-peer-dependencies` 使缺失或不匹配的 peer dependency 成为错误而非警告。
-- **构建产物**：`pnpm build` 产出 Next.js 静态站点（`.next/` 由 Next.js 自动生成），无自定义打包脚本。
-- **代码质量门禁**：`pnpm test` 同时运行 ESLint 与 Prettier check，任一失败即 CI 失败。
-- **预提交检查**：commit 前自动格式化与修复 TS/TSX 文件。
-- **Vercel 部署**：`pnpm deploy` 调用 `vercel deploy`，无需额外配置文件即可部署；`vercel.json` 仅用于 cron 调度。
-- **无容器化**：仓库内不存在 Dockerfile 或 docker-compose 文件，部署完全依赖 Vercel 平台。
-- **无 Makefile**：所有可重复构建流程均通过 pnpm scripts 表达，未见 Makefile 或 shell 构建脚本。
+- **Node 版本**：`package.json` 的 `engines.node = 24` 要求本地 Node ≥ 24；CI 额外覆盖 20/22/24 三版本以保证兼容性。
+- **pnpm 版本锁定**：`packageManager: "pnpm@10.29.3"` 确保所有开发者与 CI 使用同一 pnpm 版本。
+- **锁文件严格性**：CI 使用 `--frozen-lockfile --strict-peer-dependencies`，禁止隐式变更依赖树。
+- **预提交钩子**：`simple-git-hooks.pre-commit` 绑定 `npx lint-staged`，对 `*.{ts,tsx}` 文件依次执行 `oxfmt` 和 `oxlint --fix`。
+- **Next.js 图片安全**：`next.config.js` 显式允许 Notion CDN、AWS、Unsplash、Twitter 等域名，并放行任意 `https://**` 以兼容 Notion 嵌入的外部图床；同时设置严格的 CSP `default-src 'self'; script-src 'none'; sandbox;`。
+- **React 规则放宽**：`oxlint.config.ts` 明确关闭 `react/immutability` 与 `react/set-state-in-effect`，注释说明这是有意为之（NotionPage 中的 `window` 调试对象挂载、以及 `hasMounted`/focus/scroll effect 属于长期存在的模式）。

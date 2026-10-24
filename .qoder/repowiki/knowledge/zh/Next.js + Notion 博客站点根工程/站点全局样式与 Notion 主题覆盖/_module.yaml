@@ -1,8 +1,0 @@
-schema_version: 1
-module_path: styles
-title: 站点全局样式与 Notion 主题覆盖
-scope:
-    - styles/
-source_files: []
-depends_on: []
-related_to: []

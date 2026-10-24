@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: styles
+title: Notion 风格主题样式
+scope:
+    - styles/
+source_files: []
+depends_on: []
+related_to:
+    - path: components

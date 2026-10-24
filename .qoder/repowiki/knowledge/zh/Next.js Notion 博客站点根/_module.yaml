@@ -1,0 +1,23 @@
+schema_version: 1
+module_path: ""
+title: Next.js Notion 博客站点根
+scope:
+    - readme.md
+    - contributing.md
+    - .gitignore
+    - .editorconfig
+    - package.json
+    - pnpm-lock.yaml
+    - pnpm-workspace.yaml
+    - next.config.js
+    - tsconfig.json
+    - next-env.d.ts
+    - site.config.ts
+    - oxfmt.config.ts
+    - oxlint.config.ts
+    - vercel.json
+    - .env.example
+    - license
+source_files: []
+depends_on: []
+related_to: []

@@ -3,76 +3,77 @@ schema_version: 1
 locale: zh-CN
 branch: main
 nodes_managed: true
-exported_at: "2026-10-20T15:26:55Z"
+exported_at: "2026-10-24T11:27:46Z"
 modules:
     "":
-        dir_name: Next.js + Notion 博客站点根工程
-        title: Next.js + Notion 博客站点根工程
+        dir_name: Next.js Notion 博客站点根
+        title: Next.js Notion 博客站点根
         scope:
+            - readme.md
             - contributing.md
+            - .gitignore
+            - .editorconfig
             - package.json
-            - pnpm-workspace.yaml
             - pnpm-lock.yaml
+            - pnpm-workspace.yaml
             - next.config.js
-            - vercel.json
             - tsconfig.json
             - next-env.d.ts
-            - .eslintrc.json
-            - eslint.config.js
-            - .editorconfig
-            - .gitignore
-            - .prettierignore
+            - site.config.ts
+            - oxfmt.config.ts
+            - oxlint.config.ts
+            - vercel.json
             - .env.example
             - license
-            - readme.md
-            - site.config.ts
         source_files: []
         children:
-            - notion_lib
+            - components
+            - lib
             - pages_and_routes
             - styles
-            - ui_components
         depends_on: []
         related_to: []
-    notion_lib:
-        dir_name: Notion 站点数据层与运行时配置
-        title: Notion 站点数据层与运行时配置
-        scope:
-            - lib/
-        source_files: []
-        children: []
-        depends_on: []
-        related_to:
-            - path: pages_and_routes
-            - path: ui_components
-    pages_and_routes:
-        dir_name: Next.js 页面与 API 路由
-        title: Next.js 页面与 API 路由
-        scope:
-            - pages/
-        source_files: []
-        children: []
-        depends_on: []
-        related_to:
-            - path: notion_lib
-            - path: ui_components
-    styles:
-        dir_name: 站点全局样式与 Notion 主题覆盖
-        title: 站点全局样式与 Notion 主题覆盖
-        scope:
-            - styles/
-        source_files: []
-        children: []
-        depends_on: []
-        related_to: []
-    ui_components:
-        dir_name: Notion 博客页面 UI 组件集
-        title: Notion 博客页面 UI 组件集
+    components:
+        dir_name: Notion 站点页面与交互组件
+        title: Notion 站点页面与交互组件
         scope:
             - components/
         source_files: []
         children: []
         depends_on: []
         related_to:
-            - path: notion_lib
+            - path: lib
             - path: pages_and_routes
+            - path: styles
+    lib:
+        dir_name: Notion 站点运行时库
+        title: Notion 站点运行时库
+        scope:
+            - lib/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: components
+            - path: pages_and_routes
+    pages_and_routes:
+        dir_name: Next.js 页面与 API 路由层
+        title: Next.js 页面与 API 路由层
+        scope:
+            - pages/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: components
+            - path: lib
+    styles:
+        dir_name: Notion 风格主题样式
+        title: Notion 风格主题样式
+        scope:
+            - styles/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: components
