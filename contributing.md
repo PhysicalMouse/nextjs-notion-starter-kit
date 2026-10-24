@@ -22,6 +22,23 @@ pnpm dev
 
 You should now be able to open `http://localhost:3000` to view the webapp.
 
+## Code quality
+
+This project uses [oxlint](https://oxc.rs) for linting and [oxfmt](https://oxc.rs) for formatting (in place of ESLint + Prettier), plus `tsc` for type checking. Run all checks at once with:
+
+```bash
+pnpm test
+```
+
+This runs `oxlint`, `oxfmt --check`, and `tsc` in parallel. To auto-fix formatting and lint issues:
+
+```bash
+pnpm exec oxfmt         # format all supported files in place
+pnpm exec oxlint --fix  # apply safe lint fixes
+```
+
+Configuration lives in `oxlint.config.ts` and `oxfmt.config.ts`. A `pre-commit` hook (via `simple-git-hooks` + `lint-staged`) automatically formats and lints staged `*.ts` / `*.tsx` files.
+
 ## Production
 
 To build for production, you can run:

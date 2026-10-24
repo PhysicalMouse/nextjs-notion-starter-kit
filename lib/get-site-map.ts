@@ -1,3 +1,4 @@
+import ExpiryMap from 'expiry-map'
 import {
   getAllPagesInSpace,
   getBlockValue,
@@ -28,7 +29,8 @@ export async function getSiteMap(): Promise<types.SiteMap> {
 
 const getAllPages = pMemoize(getAllPagesImpl, {
   cacheKey: (...args) => JSON.stringify(args),
-  maxAge: 5 * 60 * 1000 // re-fetch sitemap every 5 minutes so new pages are picked up
+  // re-fetch sitemap every 5 minutes so new pages are picked up
+  cache: new ExpiryMap(5 * 60 * 1000)
 })
 
 const getPage = async (pageId: string, opts?: any) => {

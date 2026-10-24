@@ -5,12 +5,19 @@ export default {
   staticPageGenerationTimeout: 300,
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'www.notion.so' },
-      { protocol: 'https', hostname: 'notion.so' },
+      // Notion's image CDN / proxy hosts. notion-utils v8 proxies images via
+      // app.notion.com (previously www.notion.so).
+      { protocol: 'https', hostname: '**.notion.so' },
+      { protocol: 'https', hostname: '**.notion.com' },
+      { protocol: 'https', hostname: '**.notion-static.com' },
+      { protocol: 'https', hostname: '**.amazonaws.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'abs.twimg.com' },
       { protocol: 'https', hostname: 'pbs.twimg.com' },
-      { protocol: 'https', hostname: 's3.us-west-2.amazonaws.com' }
+      // Notion pages can embed images from arbitrary external hosts (image
+      // beds, link previews, etc.), so allow any https remote to keep those
+      // blocks rendering instead of hard-failing the image optimizer.
+      { protocol: 'https', hostname: '**' }
     ],
     formats: ['image/avif', 'image/webp'],
     dangerouslyAllowSVG: true,

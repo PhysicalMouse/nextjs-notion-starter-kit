@@ -44,14 +44,12 @@
   margin-bottom: 1em;
 }
 
-/* react-notion-x pins image blocks to the stored block_height even when the
-   block is rendered at page width (block_page_width). block_height describes
-   the original thumbnail size, so the combination of that fixed height and
-   object-fit: cover crops the top and bottom of every page-width image.
-   The fixed height lives on the unclassed inner div that Asset renders inside
-   figure.notion-asset-wrapper-image, so target it structurally and let the
-   image keep its intrinsic aspect ratio, as Notion does. */
-.notion-asset-wrapper-image,
+/* react-notion-x v8 pins an image block to Notion's stored block_height as an
+   inline height and applies object-fit: cover. For images resized into columns
+   in Notion this crops them badly (e.g. a 536x800 portrait forced into a
+   320px-tall box loses ~60% of its content). Let images keep their intrinsic
+   aspect ratio so their full content stays visible, as Notion renders them.
+   This is a functionality safeguard, not pixel-level layout tuning. */
 .notion-asset-wrapper-image > div {
   height: auto !important;
 }
@@ -59,28 +57,6 @@
 .notion-asset-wrapper-image > div > img {
   height: auto !important;
   max-height: none;
-}
-
-/* Notion stores a scaled media block's block_width as the OUTER box width,
-   which already includes 8px of padding on every side (measured on the live
-   Notion page: video block_width 336 -> 320px player, image block_width 480
-   -> 464px image). react-notion-x writes block_width straight onto the
-   unclassed inner <div> as an inline width, so we must NOT clobber it with
-   width:100% -- doing so made user-scaled videos balloon to the full column
-   instead of honoring the size set in Notion. Instead: keep the inline width,
-   guard against overflow on narrow screens with max-width:100%, and reproduce
-   Notion's 8px inner padding (border-box keeps the outer box at block_width)
-   so the media itself lands on the exact pixel size Notion renders. */
-.notion-asset-wrapper-image > div,
-.notion-asset-wrapper-video > div {
-  max-width: 100%;
-  padding: 8px;
-}
-
-.notion-asset-wrapper-video video {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
 }
 
 .notion-header .notion-nav-header {
@@ -159,7 +135,9 @@
 .notion-collection-card {
   overflow: hidden;
   border-radius: 14px;
-  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 15, 15, 0.08) 0px 2px 6px;
+  box-shadow:
+    rgba(15, 15, 15, 0.1) 0px 0px 0px 1px,
+    rgba(15, 15, 15, 0.08) 0px 2px 6px;
 }
 
 /* Notion's gallery covers are approximately 338 × 180 (1.878:1).
@@ -470,7 +448,7 @@
   color: var(--fg-color-2);
 }
 
-.notion-equation.notion-equation-block{
+.notion-equation.notion-equation-block {
   align-items: center;
 }
 
@@ -794,8 +772,7 @@
     padding-left: 32px;
   }
 
-  .notion-aside-table-of-contents:hover
-    .notion-table-of-contents-active-item,
+  .notion-aside-table-of-contents:hover .notion-table-of-contents-active-item,
   .notion-aside-table-of-contents:focus-within
     .notion-table-of-contents-active-item {
     color: var(--select-color-0) !important;

@@ -43,11 +43,7 @@ function SearchButton() {
   return (
     <>
       <div
-        className={cs(
-          'breadcrumb',
-          'button',
-          searchStyles.searchButton
-        )}
+        className={cs('breadcrumb', 'button', searchStyles.searchButton)}
         role='button'
         tabIndex={0}
         aria-label='搜索'

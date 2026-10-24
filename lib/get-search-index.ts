@@ -25,7 +25,11 @@ export interface SearchIndex {
 function normalizeTags(value: unknown): string[] {
   if (!value) return []
 
-  const raw = Array.isArray(value) ? value : String(value).split(',')
+  const raw = Array.isArray(value)
+    ? value
+    : typeof value === 'string'
+      ? value.split(',')
+      : []
 
   return raw
     .map((tag) => (typeof tag === 'string' ? tag.trim() : ''))

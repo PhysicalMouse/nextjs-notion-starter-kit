@@ -16,9 +16,12 @@ import { mapImageUrl } from './map-image-url'
 function isPreviewableUrl(url: string | undefined): url is string {
   if (!url) return false
   if (url.startsWith('data:')) return false
-  if (url.includes('/image/')) return false
-  if (url.includes('attachment:')) return false
 
+  // Notion-hosted images (app.notion.com/image/..., attachment:...) must stay
+  // previewable: react-notion-x v8 renders images through next/image, and the
+  // only path that supplies intrinsic width/height to next/image is the one
+  // with a preview image. Excluding them leaves such images without dimensions,
+  // so next/image falls back to "fill" mode and they collapse or fail to load.
   try {
     const parsedUrl = new URL(url)
     return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
