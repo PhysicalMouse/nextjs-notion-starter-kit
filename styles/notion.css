@@ -22,9 +22,21 @@
 }
 
 /* Notion's current light-mode body text is a neutral near-black, slightly
-   darker and less warm than react-notion-x's legacy rgb(55, 53, 47). */
-.notion.light-mode {
+   darker and less warm than react-notion-x's legacy rgb(55, 53, 47).
+
+   Scope it to <body>, which noflash.js in _document.tsx classes before the
+   first paint. Declaring it on `.notion.light-mode` instead would put the value
+   on the renderer element itself, where it always beats the dark values
+   inherited from `body.dark-mode` — a leftover `light-mode` class then renders
+   dark text on the dark canvas. */
+body.light-mode {
   --fg-color: rgb(44, 44, 43);
+}
+
+/* Safety net for the same mismatch (a stale `light-mode` class on the renderer
+   while the page itself is dark): keep the text readable. */
+body.dark-mode .notion.light-mode {
+  --fg-color: rgba(255, 255, 255, 0.9);
 }
 
 .index-page {

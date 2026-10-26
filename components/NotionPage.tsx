@@ -219,7 +219,20 @@ export function NotionPage({
   // lite mode is for oembed
   const isLiteMode = lite === 'true'
 
-  const { isDarkMode } = useDarkMode()
+  const { isDarkMode: isPersistedDarkMode } = useDarkMode()
+
+  // `use-dark-mode` reads the persisted value during the very first client
+  // render, while the server can only render the light variant. The renderer
+  // bakes `dark-mode` / `light-mode` into `.notion-app` as a plain className,
+  // and React never patches attribute diffs during hydration, so a stale
+  // `light-mode` would stick to an otherwise dark page (dark background with
+  // near-black text). Render the server value first, then apply the real one.
+  const [hasMounted, setHasMounted] = React.useState(false)
+  React.useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  const isDarkMode = hasMounted && isPersistedDarkMode
 
   const siteMapPageUrl = React.useMemo(() => {
     const params: any = {}
@@ -302,7 +315,6 @@ export function NotionPage({
       />
 
       {isLiteMode && <BodyClassName className='notion-lite' />}
-      {isDarkMode && <BodyClassName className='dark-mode' />}
 
       <NotionRenderer
         bodyClassName={cs(
